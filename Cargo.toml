@@ -1,0 +1,14 @@
+[package]
+name = "taktische-zeichen"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tera = { version = "1", default-features = false }
+serde = { version = "1.0.194", features = ["derive"] }
+resvg = { version = "0.37.0", features = ["default"]}
+walkdir = "2.4.0"
+image = "0.24.7"
+toml = "0.8.8"
