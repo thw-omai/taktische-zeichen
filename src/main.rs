@@ -1,4 +1,5 @@
 use std::{fs};
+use std::fmt::format;
 use std::path::Path;
 use tera::{Context, Tera};
 
@@ -22,51 +23,56 @@ fn main() {
     let base_directory = "icons";
 
 
-    objects.iter().for_each(|parsable_object| {
+    objects.thw.iter().for_each(|current| {
         let mut filename = format!(
             "{}/{}/{}/{}.template.svg",
             base_directory,
-            &parsable_object.organisation,
-            parsable_object.zug,
-            parsable_object.type_object
+            "thw",
+            current.zug,
+            current.template
         );
         if !Path::new(&filename).exists() {
             filename = format!(
                 "{}/{}/{}.template.svg",
                 base_directory,
-                &parsable_object.organisation,
-                parsable_object.type_object
+                current.zug,
+                current.template
             );
         }
         if !Path::new(&filename).exists() {
-            println!("Skipping: {:?}", parsable_object);
-        } else {
-            parsable_object.value.iter().for_each(|val| {
-                vec![true, false].iter().for_each(|inverted| {
-                    let target_file_path = format!(
-                        "build/{}/svg/{}/{}/{}-{}.svg",
-                        if *inverted { "inverted" } else { "original" },
-                        &parsable_object.organisation,
-                        &parsable_object.zug,
-                        parsable_object.type_object,
-                        val
+            println!("Skipping: {:?}", current.template);
+        }
+
+        current.names.split(",").for_each(|name| {
+            vec![true, false].iter().for_each(|inverted| {
+                current.special.split(",").for_each(|special| {
+                    let target_file_path = format_path(
+                        vec!("build/", "/svg/", "/", "/", "-", "-", ".svg"),
+                        vec!(
+                            if *inverted { "inverted" } else { "original" },
+                            "thw",
+                            &current.zug,
+                            &current.template,
+                            name,
+                            special
+                        ),
                     );
 
 
                     process_file(
                         &filename,
                         &target_file_path,
-                        &*parsable_object.organisation,
-                        &*parsable_object.type_object,
+                        "thw",
+                        &*current.template,
                         *inverted,
-                        val,
+                        name,
+                        &*special,
                         tera.clone(),
                     );
                 });
             });
-        }
+        });
     });
-
 
     let thw_config = &config.personen;
     if config.enabled {
@@ -115,6 +121,7 @@ fn process_file(
     name: &str,
     inverted: bool,
     value: &str,
+    special: &str,
     tera: Tera,
 ) {
     process_file_common(
@@ -124,6 +131,7 @@ fn process_file(
         name,
         inverted,
         value,
+        special,
         "",
         "",
         tera,
@@ -148,6 +156,7 @@ fn process_file_helfer(
         inverted,
         value,
         "",
+        "",
         helfer,
         tera,
     )
@@ -160,6 +169,7 @@ fn process_file_common(
     name: &str,
     inverted: bool,
     value: &str,
+    special: &str,
     ort: &str,
     helfer: &str,
     tera: Tera,
@@ -175,6 +185,7 @@ fn process_file_common(
     context.insert("value", value);
     context.insert("ort", &ort);
     context.insert("helfer", &helfer);
+    context.insert("special", &special);
     if inverted {
         context.insert("thw_main", &thw_blue);
         context.insert("thw_secondary", &thw_weiss);
@@ -196,4 +207,26 @@ fn save_to_file(file_name: &str, content: &str) {
         fs::create_dir_all(parent).expect("Unable to create directory");
     }
     fs::write(file_name, content).expect("Unable to write file");
+}
+
+fn format_path(
+    format: Vec<&str>,
+    values: Vec<&str>,
+) -> String {
+    let strings = format
+        .iter()
+        .zip(values.iter())
+        .map(|(template, value)| {
+            return if value.is_empty() {
+                "".to_string()
+            } else {
+                let mut str = template.to_string();
+                str.push_str(value);
+                str
+            };
+        })
+        .collect::<Vec<_>>();
+    let mut joined_str = strings.join("");
+    joined_str.push_str(".svg");
+    joined_str
 }

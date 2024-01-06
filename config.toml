@@ -1,38 +1,165 @@
-[[thw.alle]]
-Helfer = ",KF,SAN"
-Fachberater = "FaBe,TeBe"
+[[thw]]
+template = "Helfer"
+zug = ""
+names = ",KF,SAN"
+special = ""
 
-[[thw.FK]]
-Gruppenfuehrer = "F,K"
-Truppfuehrer = "F,K"
-Truppe = "FM,IuK"
-Fuehrungstruppe = "FüKom,FüGeh"
-Gruppe = "K"
-Fuehrungsgruppe = "F"
-Zugfuehrer = "FK"
-Zugtruppfuehrer = "FK"
-Stabsgruppe = "Stab"
-Stab = "SGL,S1,S2,S3,S4,S5,S6"
-Fuehrungszug = "FK"
-Zugtrupp = "FK"
+[[thw]]
+template = "Fachberater"
+zug = ""
+names = "FaBe,TeBe"
+special = ""
+
+[[thw]]
+template = "Gruppenfuehrer"
+zug = "FK"
+names = "F,K"
+special = ""
+
+[[thw]]
+template = "Truppfuehrer"
+zug = "FK"
+names = "F,K"
+special = ""
+
+[[thw]]
+template = "Truppe"
+zug = "FK"
+names = "FM,IuK"
+special = ""
+
+[[thw]]
+template = "Fuehrungstruppe"
+zug = "FK"
+names = "FüKom,FüGeh"
+special = ""
+
+[[thw]]
+template = "Gruppe"
+zug = "FK"
+names = "K"
+special = ""
+
+[[thw]]
+template = "Fuehrungsgruppe"
+zug = "FK"
+names = "F"
+special = ""
+
+[[thw]]
+template = "Zugfuehrer"
+zug = "FK"
+names = "FK"
+special = ""
+
+[[thw]]
+template = "Zugtruppfuehrer"
+zug = "FK"
+names = "FK"
+special = ""
+
+[[thw]]
+template = "Stabsgruppe"
+zug = "FK"
+names = "Stab"
+special = ""
+
+[[thw]]
+template = "Stab"
+zug = "FK"
+names = "SGL,S1,S2,S3,S4,S5,S6"
+special = ""
+
+[[thw]]
+template = "Fuehrungszug"
+zug = "FK"
+names = "FK"
+special = ""
+
+[[thw]]
+template = "Zugtrupp"
+zug = "FK"
+names = "FK"
+special = ""
+
+[[thw]]
+template = "Gruppenfuehrer"
+zug = "TZ"
+names = "B,SB,I,N,O"
+special = ""
+
+[[thw]]
+template = "Truppfuehrer"
+zug = "TZ"
+names = "B,SB,I,N,O,ESS"
+special = ""
+
+[[thw]]
+template = "Truppe"
+zug = "TZ"
+names = "ESS"
+special = ""
+
+[[thw]]
+template = "Gruppe"
+zug = "TZ"
+names = "I,N,O"
+special = ""
+
+[[thw]]
+template = "Gruppe"
+zug = "TZ"
+names = "B,SB"
+special = ",A,B"
+
+[[thw]]
+template = "Zugfuehrer"
+zug = "TZ"
+names = "TZ"
+special = ""
+
+[[thw]]
+template = "Zugtruppfuehrer"
+zug = "TZ"
+names = "TZ"
+special = ""
+
+[[thw]]
+template = "Zug"
+zug = "TZ"
+names = "TZ"
+special = ""
+
+[[thw]]
+template = "Zugtrupp"
+zug = "TZ"
+names = "TZ"
+special = ""
 
 
+##### LOG #####
+[[thw]]
+template = "Zugfuehrer"
+zug = "Log"
+names = "Log"
+special = ""
 
-[[thw.TZ]]
-Gruppenfuehrer = "B,SB,I,N,O"
-Truppfuehrer = "B,SB,I,N,O,ESS"
-Truppe = "ESS"
-Gruppe = "B,SB,I,N,O"
-Zugfuehrer = "TZ"
-Zugtruppfuehrer = "TZ"
-Zug = "TZ"
-Zugtrupp = "TZ"
+[[thw]]
+template = "Zugtruppfuehrer"
+zug = "Log"
+names = "Log"
+special = ""
 
-[[thw.Log]]
-Zugfuehrer = "Log"
-Zugtruppfuehrer = "Log"
-Zug = "Log"
-Zugtrupp = "Log"
+[[thw]]
+template = "Zug"
+zug = "Log"
+names = "Log"
+special = ""
 
+[[thw]]
+template = "Zugtrupp"
+zug = "Log"
+names = "Log"
+special = ""
 
 
