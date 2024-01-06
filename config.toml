@@ -1,0 +1,38 @@
+[[thw.alle]]
+Helfer = ",KF,SAN"
+Fachberater = "FaBe,TeBe"
+
+[[thw.FK]]
+Gruppenfuehrer = "F,K"
+Truppfuehrer = "F,K"
+Truppe = "FM,IuK"
+Fuehrungstruppe = "FüKom,FüGeh"
+Gruppe = "K"
+Fuehrungsgruppe = "F"
+Zugfuehrer = "FK"
+Zugtruppfuehrer = "FK"
+Stabsgruppe = "Stab"
+Stab = "SGL,S1,S2,S3,S4,S5,S6"
+Fuehrungszug = "FK"
+Zugtrupp = "FK"
+
+
+
+[[thw.TZ]]
+Gruppenfuehrer = "B,SB,I,N,O"
+Truppfuehrer = "B,SB,I,N,O,ESS"
+Truppe = "ESS"
+Gruppe = "B,SB,I,N,O"
+Zugfuehrer = "TZ"
+Zugtruppfuehrer = "TZ"
+Zug = "TZ"
+Zugtrupp = "TZ"
+
+[[thw.Log]]
+Zugfuehrer = "Log"
+Zugtruppfuehrer = "Log"
+Zug = "Log"
+Zugtrupp = "Log"
+
+
+

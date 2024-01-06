@@ -3,14 +3,15 @@ use serde::Deserialize;
 
 use toml::Value;
 
-pub fn parse() -> (Vec<ParseableObject>, ThwConfig) {
+pub fn parse() -> (Vec<ParseableObject>, HelferConfig) {
     let mut objects: Vec<ParseableObject> = vec![];
     let config_text = fs::read_to_string("config.toml").expect("Couldn't parse config file.");
+    let helfer_text = fs::read_to_string("helfer.toml").expect("Couldn't parse helfer file.");
 
     let value = config_text.parse::<Value>().unwrap();
     parse_organisation(&mut objects, &value);
 
-    let config: ThwConfig = toml::from_str(&*config_text).unwrap();
+    let config: HelferConfig = toml::from_str(&*helfer_text).unwrap();
 
     return (objects, config);
 }
@@ -83,17 +84,16 @@ pub struct ParseableObject {
 
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct ThwConfig {
-    pub(crate) thw: ThwEntry,
+pub(crate) struct HelferConfig {
+    pub(crate) enabled: bool,
+    pub(crate) personen: Vec<Person>,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct ThwEntry {
-    pub(crate) alle:Vec<ThwAlle>,
-}
-
-#[derive(Debug, Deserialize)]
-pub(crate) struct ThwAlle {
-    pub(crate) orte: String,
-    pub(crate) helfer_namen: String,
+pub(crate) struct Person {
+    pub(crate) helfer: String,
+    pub(crate) organisation: String,
+    pub(crate) zug: String,
+    pub(crate) template: String,
+    pub(crate) value: String,
 }

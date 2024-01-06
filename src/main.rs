@@ -43,40 +43,69 @@ fn main() {
         } else {
             parsable_object.value.iter().for_each(|val| {
                 vec![true, false].iter().for_each(|inverted| {
-                    let thw_config = &config.thw.alle.get(0).unwrap();
-                    thw_config.orte.split(",").for_each(|ort| {
-                        thw_config.helfer_namen.split(",").for_each(|helfer| {
-                            let target_file_path = format!(
-                                "build/{}/svg/{}/{}/{}/{}-{}-{}.svg",
-                                ort,
-                                if *inverted { "inverted" } else { "original" },
-                                &parsable_object.organisation,
-                                &parsable_object.zug,
-                                helfer,
-                                parsable_object.type_object,
-                                val
-                            );
+                    let target_file_path = format!(
+                        "build/{}/svg/{}/{}/{}-{}.svg",
+                        if *inverted { "inverted" } else { "original" },
+                        &parsable_object.organisation,
+                        &parsable_object.zug,
+                        parsable_object.type_object,
+                        val
+                    );
 
 
-                            process_file(
-                                &filename,
-                                &target_file_path,
-                                &*parsable_object.organisation,
-                                &*parsable_object.type_object,
-                                *inverted,
-                                val,
-                                ort,
-                                helfer,
-                                tera.clone(),
-                            );
-                        });
-                    });
+                    process_file(
+                        &filename,
+                        &target_file_path,
+                        &*parsable_object.organisation,
+                        &*parsable_object.type_object,
+                        *inverted,
+                        val,
+                        tera.clone(),
+                    );
                 });
             });
         }
     });
 
-    svg_tools::convert_svg()
+
+    let thw_config = &config.personen;
+    if config.enabled {
+        thw_config.iter().for_each(|person| {
+            vec![true, false].iter().for_each(|inverted| {
+                person.helfer.split(",").for_each(|helfer| {
+                    person.value.split(",").for_each(|val| {
+                        let target_file_path = format!(
+                            "build/custom/svg/{}/{}/{}/{}-{}-{}.svg",
+                            if *inverted { "inverted" } else { "original" },
+                            &person.organisation,
+                            &person.zug,
+                            &helfer,
+                            person.template,
+                            val,
+                        );
+                        let filename = format!(
+                            "{}/{}/{}.template.svg",
+                            base_directory,
+                            &person.organisation,
+                            val
+                        );
+
+                        process_file_helfer(
+                            &filename,
+                            &target_file_path,
+                            &*person.organisation,
+                            &person.template,
+                            *inverted,
+                            &*val,
+                            helfer,
+                            tera.clone(),
+                        );
+                    });
+                });
+            });
+        });
+    }
+    //svg_tools::convert_svg()
 }
 
 fn process_file(
@@ -85,7 +114,52 @@ fn process_file(
     organisation: &str,
     name: &str,
     inverted: bool,
-    value: &String,
+    value: &str,
+    tera: Tera,
+) {
+    process_file_common(
+        file_path,
+        target_file_path,
+        organisation,
+        name,
+        inverted,
+        value,
+        "",
+        "",
+        tera,
+    )
+}
+
+fn process_file_helfer(
+    file_path: &str,
+    target_file_path: &str,
+    organisation: &str,
+    name: &str,
+    inverted: bool,
+    value: &str,
+    helfer: &str,
+    tera: Tera,
+) {
+    process_file_common(
+        file_path,
+        target_file_path,
+        organisation,
+        name,
+        inverted,
+        value,
+        "",
+        helfer,
+        tera,
+    )
+}
+
+fn process_file_common(
+    file_path: &str,
+    target_file_path: &str,
+    organisation: &str,
+    name: &str,
+    inverted: bool,
+    value: &str,
     ort: &str,
     helfer: &str,
     tera: Tera,

@@ -50,7 +50,7 @@ fn convert_svg_to_png(
     let tree = Tree::from_usvg(&tree_usvg);
 
     let pixmap_size = tree.size.to_int_size();
-    let mut pixmap = Pixmap::new(pixmap_size.width()*4, pixmap_size.height()*4).unwrap();
+    let mut pixmap = Pixmap::new(pixmap_size.width(), pixmap_size.height()).unwrap();
 
     Tree::render(&tree, Transform::default(), &mut pixmap.as_mut());
 
