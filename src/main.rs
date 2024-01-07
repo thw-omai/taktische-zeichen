@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use tera::{Context, Tera};
+use crate::config::DescriptionObjects;
 
 mod svg_tools;
 mod config;
@@ -24,58 +25,25 @@ fn main() {
 
 
     cfg.thw.iter().for_each(|current| {
-        let mut filename = format!(
-            "{}/{}/{}/{}.template.svg",
-            base_directory,
-            "thw",
-            current.zug,
-            current.template
-        );
-        if !Path::new(&filename).exists() {
-            filename = format!(
-                "{}/{}/{}.template.svg",
-                base_directory,
-                current.zug,
-                current.template
-            );
-        }
-        if !Path::new(&filename).exists() {
-            println!("Skipping: {:?}", current.template);
-        }
-
-        current.names.split(",").for_each(|name| {
-            vec![true, false].iter().for_each(|inverted| {
-                current.special.split(",").for_each(|special| {
-                    let target_file_path = format!(
-                        "{}{}.svg",
-                        join_paths(vec!(
-                            "build",
-                            if *inverted { "inverted" } else { "original" },
-                            "svg",
-                            "thw",
-                            &current.zug,
-                            &uppercase_first_letter(&current.dir),
-                        )),
-                        join_filename(vec!(
-                            name,
-                            special,
-                            &current.template
-                        )),
-                    );
-
-                    process_file(
-                        &filename,
-                        &target_file_path,
-                        "thw",
-                        &*current.template,
-                        *inverted,
-                        name,
-                        &*special,
-                        tera.clone(),
-                    );
-                });
-            });
-        });
+        generate_svg("THW", &mut tera, base_directory, &current);
+    });
+    cfg.fw.iter().for_each(|current| {
+        generate_svg("FW", &mut tera, base_directory, &current);
+    });
+    cfg.pol.iter().for_each(|current| {
+        generate_svg("POL", &mut tera, base_directory, &current);
+    });
+    cfg.zoll.iter().for_each(|current| {
+        generate_svg("Zoll", &mut tera, base_directory, &current);
+    });
+    cfg.bw.iter().for_each(|current| {
+        generate_svg("BW", &mut tera, base_directory, &current);
+    });
+    cfg.rettung.iter().for_each(|current| {
+        generate_svg("Rettung", &mut tera, base_directory, &current);
+    });
+    cfg.kats.iter().for_each(|current| {
+        generate_svg("KatS", &mut tera, base_directory, &current);
     });
 
     let thw_config = &helfer_config.personen;
@@ -108,6 +76,7 @@ fn main() {
                             *inverted,
                             &*val,
                             helfer,
+                            "personen",
                             tera.clone(),
                         );
                     });
@@ -120,6 +89,67 @@ fn main() {
     }
 }
 
+fn generate_svg(
+    organisation: &str,
+    tera: &mut Tera,
+    base_directory: &str,
+    current: &&DescriptionObjects,
+) {
+    let mut filename = format!(
+        "{}/{}/{}/{}.template.svg",
+        base_directory,
+        organisation,
+        current.zug,
+        current.template
+    );
+    if !Path::new(&filename).exists() {
+        filename = format!(
+            "{}/{}/{}.template.svg",
+            base_directory,
+            current.zug,
+            current.template
+        );
+    }
+    if !Path::new(&filename).exists() {
+        println!("Skipping: {:?}", current.template);
+    }
+
+    current.names.split(",").for_each(|name| {
+        vec![true, false].iter().for_each(|inverted| {
+            current.special.split(",").for_each(|special| {
+                let target_file_path = format!(
+                    "{}{}.svg",
+                    join_paths(vec!(
+                        "build",
+                        if *inverted { "inverted" } else { "original" },
+                        "svg",
+                        organisation,
+                        &current.zug,
+                        &uppercase_first_letter(&current.dir),
+                    )),
+                    join_filename(vec!(
+                        name,
+                        special,
+                        &current.template
+                    )),
+                );
+
+                process_file(
+                    &filename,
+                    &target_file_path,
+                    organisation,
+                    &*current.template,
+                    *inverted,
+                    name,
+                    &*special,
+                    &*current.dir,
+                    tera.clone(),
+                );
+            });
+        });
+    });
+}
+
 fn process_file(
     file_path: &str,
     target_file_path: &str,
@@ -128,6 +158,7 @@ fn process_file(
     inverted: bool,
     value: &str,
     special: &str,
+    dir: &str,
     tera: Tera,
 ) {
     process_file_common(
@@ -140,6 +171,7 @@ fn process_file(
         special,
         "",
         "",
+        dir,
         tera,
     )
 }
@@ -152,6 +184,7 @@ fn process_file_helfer(
     inverted: bool,
     value: &str,
     helfer: &str,
+    dir: &str,
     tera: Tera,
 ) {
     process_file_common(
@@ -164,6 +197,7 @@ fn process_file_helfer(
         "",
         "",
         helfer,
+        dir,
         tera,
     )
 }
@@ -178,29 +212,55 @@ fn process_file_common(
     special: &str,
     ort: &str,
     helfer: &str,
+    dir: &str,
     tera: Tera,
 ) {
     println!("Processed content of {}", file_path);
 
     let mut context = Context::new();
 
-    let thw_weiss = "#fff";
-    let thw_blue = "#003399";
+    let main = match organisation.to_lowercase().as_str() {
+        "thw" => { "#fff" }
+        "fw" => { "#fff" }
+        "zoll" => { "#fff" }
+        "rettung" => { "#fff" }
+        "pol" => { "#fff" }
+        "bw" => { "#fff" }
+        &_ => { "#fff" }
+    };
+    let secondary = match organisation.to_lowercase().as_str() {
+        "thw" => { "#003399" }
+        "fw" => { "#FF0000" }
+        "zoll" => { "#13A538" }
+        "pol" => { "#13A538" }
+        "bw" => { "#996633" }
+        "rettung" => { "#000" }
+        "kats" => { "#DF6711" }
+        &_ => { "#000" }
+    };
 
 
     context.insert("value", value);
+    context.insert("organisation", organisation);
     context.insert("ort", &ort);
     context.insert("helfer", &helfer);
     context.insert("special", &special);
     if inverted {
-        context.insert("thw_main", &thw_blue);
-        context.insert("thw_secondary", &thw_weiss);
+        context.insert("main_color", &secondary);
+        context.insert("secondary_color", &main);
     } else {
-        context.insert("thw_main", &thw_weiss);
-        context.insert("thw_secondary", &thw_blue);
+        context.insert("main_color", &main);
+        context.insert("secondary_color", &secondary);
     }
 
-    let content = tera.render(format!("{}/{}.template.svg", organisation, name).as_str(), &context).expect("TODO: panic message");
+    let content = tera.render(
+        format!(
+            "{}/{}.template.svg",
+            dir,
+            name
+        ).as_str(),
+        &context,
+    ).expect("TODO: panic message");
     save_to_file(target_file_path, &content)
 }
 
@@ -240,7 +300,9 @@ fn join_filename(
         .join("-")
 }
 
-fn uppercase_first_letter(s: &str) -> String {
+fn uppercase_first_letter(
+    s: &str
+) -> String {
     let mut c = s.chars();
     match c.next() {
         None => String::new(),

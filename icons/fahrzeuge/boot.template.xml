@@ -1,0 +1,17 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewbox="0 0 256 256">
+    <title> {% block title %}Anhänger{% endblock title %}</title>
+    <defs>
+        {% include "fonts.template.xml" -%}
+        <clipPath id="hook">
+            <rect x="0" y="44" width="10" height="148" />
+        </clipPath>
+    </defs>
+    <path d="M10,64 l236,0 A118,118 180 0 1 10,64 Z" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="10" clip-path="url(#symbol)" />
+    <path d="M10,64 l236,0 A118,118 180 0 1 10,64 Z" stroke="{{main_color}}" fill="none" stroke-width="1" clip-path="url(#symbol)" />
+
+    {% block type %}
+
+    {% endblock type %}
+    {% include "einheit/infos_gruppe.template.xml" -%}
+</svg>

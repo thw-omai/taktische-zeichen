@@ -437,14 +437,14 @@ template = "Gebaeude"
 zug = "Alle"
 names = ",OV,RST,LV,Ltg,AZ,Log"
 special = ""
-dir = "gebäude"
+dir = "gebaeude"
 
 [[thw]]
 template = "Gebaeude"
 zug = "Alle"
 names = "LV"
 special = "HeRpSl,Bayern,Küste,BaWü,BEBBST,HBNI,HHMVSH,SNTH"
-dir = "gebäude"
+dir = "gebaeude"
 
 [[thw]]
 template = "Anhaenger"
@@ -452,3 +452,68 @@ zug = "Alle"
 names = ",0.5t,2t,6t,7t, BT 2t,DLE,FKH,I 2T,kl Boot,Kühl,LiMa,Log-MW 2t,MzAB,MzB,MzPt,PF 12t,RettH,Ru 12t,SchlB,Sp 2t,Spül,SEA,Tiefl 18t,TWAA,Wks"
 special = ""
 dir = "fahrzeuge"
+
+
+
+[[fw]]
+template="Gruppenfuehrer"
+zug=""
+names=""
+special = ""
+dir = "personen"
+
+[[fw]]
+template="Fuehrung"
+zug=""
+names=",A,S,W"
+special = ""
+dir = "personen"
+
+[[fw]]
+template="Helfer"
+zug=""
+names=",A,Ma,Me,S,W"
+special = ""
+dir = "personen"
+
+[[fw]]
+template = "Gebaeude"
+zug = ""
+names = "Fw"
+special = ""
+dir = "gebaeude"
+
+[[bw]]
+template="Gruppenfuehrer"
+zug=""
+names=""
+special = ""
+dir = "personen"
+
+[[pol]]
+template="Gruppenfuehrer"
+zug=""
+names=""
+special = ""
+dir = "personen"
+
+[[zoll]]
+template="Gruppenfuehrer"
+zug=""
+names=""
+special = ""
+dir = "personen"
+
+[[rettung]]
+template="Gruppenfuehrer"
+zug=""
+names=""
+special = ""
+dir = "personen"
+
+[[kats]]
+template="Gruppenfuehrer"
+zug=""
+names=""
+special = ""
+dir = "personen"

@@ -1,2 +1,0 @@
-{% extends "thw/basic_lkw.template.xml" %}
-{% block title %}Anhänger{% endblock title %}

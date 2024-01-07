@@ -1,0 +1,12 @@
+{% if value|length > 6 -%}
+<text x="128" y="145" style="font-weight: bold; text-anchor: middle; font-size: 38px;" fill="{{main_color}}">{{value}}</text>
+{% else %}
+<text x="128" y="145" style="font-weight: bold; text-anchor: middle; font-size: 48px;" fill="{{main_color}}">{{value}}</text>
+{% endif %}
+<text x="226" y="180" style="text-anchor: middle; font-size: 12px;" fill="{{main_color}}">{{organisation}}</text>
+{% if special %}
+<text style="font-weight: bold; text-anchor: start;" fill="{{main_color}}" x="20" y="180">{{special}}</text>
+{% endif %}
+{% if ort %}
+<text x="128" y="210" style="font-size:18px; text-anchor: middle;"	fill="{{main_color}}">{{ort}}</text>
+{% endif %}

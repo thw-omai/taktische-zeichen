@@ -16,11 +16,17 @@ pub fn parse() -> (Config, HelferConfig) {
 #[derive(Debug, Deserialize)]
 pub(crate) struct Config {
     pub(crate) enable_png: bool,
-    pub(crate) thw: Vec<Thw>,
+    pub(crate) thw: Vec<DescriptionObjects>,
+    pub(crate) fw: Vec<DescriptionObjects>,
+    pub(crate) zoll: Vec<DescriptionObjects>,
+    pub(crate) rettung: Vec<DescriptionObjects>,
+    pub(crate) pol: Vec<DescriptionObjects>,
+    pub(crate) bw: Vec<DescriptionObjects>,
+    pub(crate) kats: Vec<DescriptionObjects>,
 }
 
 #[derive(Debug, Deserialize)]
-pub(crate) struct Thw {
+pub(crate) struct DescriptionObjects {
     pub(crate) template: String,
     pub(crate) zug: String,
     pub(crate) names: String,

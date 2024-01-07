@@ -1,2 +1,0 @@
-{% extends "thw/boot.template.xml" %}
-{% block title %}Boot{% endblock title %}

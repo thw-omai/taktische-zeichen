@@ -1,0 +1,2 @@
+{% extends "fahrzeuge/boot.template.xml" %}
+{% block title %}Boot{% endblock title %}
