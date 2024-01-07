@@ -46,18 +46,22 @@ fn main() {
         current.names.split(",").for_each(|name| {
             vec![true, false].iter().for_each(|inverted| {
                 current.special.split(",").for_each(|special| {
-                    let target_file_path = format_path(
-                        vec!("build/", "/svg/", "/", "/", "-", "-", ".svg"),
-                        vec!(
+                    let target_file_path = format!(
+                        "{}{}.svg",
+                        join_paths(vec!(
+                            "build",
                             if *inverted { "inverted" } else { "original" },
+                            "svg",
                             "thw",
                             &current.zug,
-                            &current.template,
+                            &uppercase_first_letter(&current.dir),
+                        )),
+                        join_filename(vec!(
                             name,
-                            special
-                        ),
+                            special,
+                            &current.template
+                        )),
                     );
-
 
                     process_file(
                         &filename,
@@ -211,24 +215,35 @@ fn save_to_file(file_name: &str, content: &str) {
     fs::write(file_name, content).expect("Unable to write file");
 }
 
-fn format_path(
-    format: Vec<&str>,
-    values: Vec<&str>,
+fn join_paths(
+    paths: Vec<&str>,
 ) -> String {
-    let strings = format
+    let mut string = paths
         .iter()
-        .zip(values.iter())
-        .map(|(template, value)| {
-            return if value.is_empty() {
-                "".to_string()
-            } else {
-                let mut str = template.to_string();
-                str.push_str(value);
-                str
-            };
-        })
-        .collect::<Vec<_>>();
-    let mut joined_str = strings.join("");
-    joined_str.push_str(".svg");
-    joined_str
+        .filter(|template| !template.is_empty())
+        .map(|x| x.as_ref())
+        .collect::<Vec<_>>()
+        .join("/");
+    string
+        .push_str("/");
+    string
+}
+
+fn join_filename(
+    names: Vec<&str>,
+) -> String {
+    names
+        .iter()
+        .filter(|template| !template.is_empty())
+        .map(|x| x.as_ref())
+        .collect::<Vec<_>>()
+        .join("-")
+}
+
+fn uppercase_first_letter(s: &str) -> String {
+    let mut c = s.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+    }
 }

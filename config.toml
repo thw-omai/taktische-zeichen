@@ -2,93 +2,108 @@ enable_png = false
 
 [[thw]]
 template = "Helfer"
-zug = ""
+zug = "Alle"
 names = ",KF,SAN"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Fachberater"
-zug = ""
+zug = "OV"
 names = "FaBe,TeBe"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Gruppenfuehrer"
 zug = "FK"
 names = "F,K"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Truppfuehrer"
 zug = "FK"
 names = "F,K"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Truppe"
 zug = "FK"
 names = "FM,IuK,WV"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Fuehrungstruppe"
 zug = "FK"
 names = "FüKom,FüGeh"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Gruppe"
 zug = "FK"
 names = "K"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Fuehrungsgruppe"
 zug = "FK"
 names = "F"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Zugfuehrer"
 zug = "FK"
 names = "FZ-FK,FK"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Zugtruppfuehrer"
 zug = "FK"
 names = "FZ-FK,FK"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Stabsgruppe"
 zug = "FK"
 names = "Stab"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Stab"
 zug = "FK"
 names = "SGL,S1,S2,S3,S4,S5,S6"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Fuehrungszug"
 zug = "FK"
 names = "FK"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Zugtrupp"
 zug = "FK"
 names = "FK"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Weitverkehrstrupp"
 zug = "FK"
 names = "WV"
 special = ""
+dir = "einheit"
 
 
 ##### TZ #####
@@ -99,42 +114,49 @@ template = "Gruppenfuehrer"
 zug = "TZ"
 names = "I,N,BT,E,Öl,Sp,L,ÖGA,B,SB,BrB,TW,W,ENT,GA,JuGr,SEEBA,SEEWA,SEELift"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Truppfuehrer"
 zug = "TZ"
 names = "ESS"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Truppe"
 zug = "TZ"
 names = ",I,N,BT,E,Öl,Sp,L,ÖGA,B,SB,BrB,TW,W,ENT,GA,JuGr,SEEBA,SEEWA,SEELift,ESS,MHP,UL"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Gruppe"
 zug = "TZ"
 names = ",I,N,BT,E,Öl,Sp,L,ÖGA"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Gruppe"
 zug = "TZ"
 names = "B"
 special = ",ASH,EGS"
+dir = "einheit"
 
 [[thw]]
 template = "Gruppe"
 zug = "TZ"
 names = "SB,BrB,TW,W"
 special = ",A,B"
+dir = "einheit"
 
 [[thw]]
 template = "Gruppe"
 zug = "TZ"
 names = ",Öl,O,WP"
 special = ",A,B,C"
+dir = "einheit"
 
 
 [[thw]]
@@ -142,36 +164,42 @@ template = "Gruppe"
 zug = "TZ"
 names = "R"
 special = ",A(R),A,A(B),B,C"
+dir = "einheit"
 
 [[thw]]
 template = "GruppeOhneFuehrung"
 zug = "TZ"
 names = ",AEGr,ENT,GA,JuGr,SEEBA,SEEWA,SEELift"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Zugfuehrer"
 zug = "TZ"
 names = "TZ"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Zugtruppfuehrer"
 zug = "TZ"
 names = "TZ"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Zug"
 zug = "TZ"
 names = "TZ"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Zugtrupp"
 zug = "TZ"
 names = "TZ"
 special = ""
+dir = "einheit"
 
 
 [[thw]]
@@ -179,6 +207,7 @@ template = "Staffel"
 zug = "TZ"
 names = ""
 special = ""
+dir = "einheit"
 
 
 [[thw]]
@@ -186,6 +215,7 @@ template = "Verband"
 zug = "TZ"
 names = ",Feldlager,"
 special = ""
+dir = "einheit"
 
 
 ##### LOG #####
@@ -194,42 +224,49 @@ template = "Zugfuehrer"
 zug = "Log"
 names = "Log,FZ-Log"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Zugtruppfuehrer"
 zug = "Log"
 names = "Log,FZ-Log"
 special = ""
+dir = "personen"
 
 [[thw]]
 template = "Zug"
 zug = "Log"
 names = "Log"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "LogTruppe"
 zug = "Log"
 names = "Log-M,Log-VG,Log-V,TS"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "LogGruppe"
 zug = "Log"
 names = "Log-MW,Log-V,Log"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Truppe"
 zug = "Log"
 names = "Log"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Zugtrupp"
 zug = "Log"
 names = "Log"
 special = ""
+dir = "einheit"
 
 ##### Sonstig #####
 
@@ -238,9 +275,11 @@ template = "LogVerband"
 zug = "Log"
 names = ",Logistik"
 special = ""
+dir = "einheit"
 
 [[thw]]
 template = "Zug"
 zug = "VOST"
 names = "VOST"
 special = ""
+dir = "einheit"

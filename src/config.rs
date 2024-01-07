@@ -25,6 +25,7 @@ pub(crate) struct Thw {
     pub(crate) zug: String,
     pub(crate) names: String,
     pub(crate) special: String,
+    pub(crate) dir: String,
 }
 
 
