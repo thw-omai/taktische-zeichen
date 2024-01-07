@@ -15,6 +15,7 @@ pub fn parse() -> (Config, HelferConfig) {
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Config {
+    pub(crate) enable_png: bool,
     pub(crate) thw: Vec<Thw>,
 }
 

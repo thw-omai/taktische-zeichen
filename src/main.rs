@@ -1,13 +1,13 @@
-use std::{fs};
-use std::fmt::format;
+use std::fs;
 use std::path::Path;
+
 use tera::{Context, Tera};
 
 mod svg_tools;
 mod config;
 
 fn main() {
-    let (objects, config) = config::parse();
+    let (cfg, helfer_config) = config::parse();
 
 
     let mut tera = match Tera::new("icons/**/*") {
@@ -23,7 +23,7 @@ fn main() {
     let base_directory = "icons";
 
 
-    objects.thw.iter().for_each(|current| {
+    cfg.thw.iter().for_each(|current| {
         let mut filename = format!(
             "{}/{}/{}/{}.template.svg",
             base_directory,
@@ -74,8 +74,8 @@ fn main() {
         });
     });
 
-    let thw_config = &config.personen;
-    if config.enabled {
+    let thw_config = &helfer_config.personen;
+    if helfer_config.enabled {
         thw_config.iter().for_each(|person| {
             vec![true, false].iter().for_each(|inverted| {
                 person.helfer.split(",").for_each(|helfer| {
@@ -111,7 +111,9 @@ fn main() {
             });
         });
     }
-    //svg_tools::convert_svg()
+    if cfg.enable_png {
+        svg_tools::convert_svg()
+    }
 }
 
 fn process_file(
