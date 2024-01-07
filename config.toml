@@ -1,4 +1,4 @@
-enable_png = true
+enable_png = false
 
 [[thw]]
 template = "Helfer"
@@ -27,7 +27,7 @@ special = ""
 [[thw]]
 template = "Truppe"
 zug = "FK"
-names = "FM,IuK"
+names = "FM,IuK,WV"
 special = ""
 
 [[thw]]
@@ -51,13 +51,13 @@ special = ""
 [[thw]]
 template = "Zugfuehrer"
 zug = "FK"
-names = "FK"
+names = "FZ-FK,FK"
 special = ""
 
 [[thw]]
 template = "Zugtruppfuehrer"
 zug = "FK"
-names = "FK"
+names = "FZ-FK,FK"
 special = ""
 
 [[thw]]
@@ -85,34 +85,69 @@ names = "FK"
 special = ""
 
 [[thw]]
+template = "Weitverkehrstrupp"
+zug = "FK"
+names = "WV"
+special = ""
+
+
+##### TZ #####
+
+
+[[thw]]
 template = "Gruppenfuehrer"
 zug = "TZ"
-names = "B,SB,I,N,O"
+names = "I,N,BT,E,Öl,Sp,L,ÖGA,B,SB,BrB,TW,W,ENT,GA,JuGr,SEEBA,SEEWA,SEELift"
 special = ""
 
 [[thw]]
 template = "Truppfuehrer"
 zug = "TZ"
-names = "B,SB,I,N,O,ESS"
+names = "ESS"
 special = ""
 
 [[thw]]
 template = "Truppe"
 zug = "TZ"
-names = "ESS"
+names = ",I,N,BT,E,Öl,Sp,L,ÖGA,B,SB,BrB,TW,W,ENT,GA,JuGr,SEEBA,SEEWA,SEELift,ESS,MHP,UL"
 special = ""
 
 [[thw]]
 template = "Gruppe"
 zug = "TZ"
-names = "I,N,O"
+names = ",I,N,BT,E,Öl,Sp,L,ÖGA"
 special = ""
 
 [[thw]]
 template = "Gruppe"
 zug = "TZ"
-names = "B,SB"
+names = "B"
+special = ",ASH,EGS"
+
+[[thw]]
+template = "Gruppe"
+zug = "TZ"
+names = "SB,BrB,TW,W"
 special = ",A,B"
+
+[[thw]]
+template = "Gruppe"
+zug = "TZ"
+names = ",Öl,O,WP"
+special = ",A,B,C"
+
+
+[[thw]]
+template = "Gruppe"
+zug = "TZ"
+names = "R"
+special = ",A(R),A,A(B),B,C"
+
+[[thw]]
+template = "GruppeOhneFuehrung"
+zug = "TZ"
+names = ",AEGr,ENT,GA,JuGr,SEEBA,SEEWA,SEELift"
+special = ""
 
 [[thw]]
 template = "Zugfuehrer"
@@ -136,6 +171,20 @@ special = ""
 template = "Zugtrupp"
 zug = "TZ"
 names = "TZ"
+special = ""
+
+
+[[thw]]
+template = "Staffel"
+zug = "TZ"
+names = ""
+special = ""
+
+
+[[thw]]
+template = "Verband"
+zug = "TZ"
+names = ",Feldlager,"
 special = ""
 
 
@@ -143,17 +192,35 @@ special = ""
 [[thw]]
 template = "Zugfuehrer"
 zug = "Log"
-names = "Log"
+names = "Log,FZ-Log"
 special = ""
 
 [[thw]]
 template = "Zugtruppfuehrer"
 zug = "Log"
-names = "Log"
+names = "Log,FZ-Log"
 special = ""
 
 [[thw]]
 template = "Zug"
+zug = "Log"
+names = "Log"
+special = ""
+
+[[thw]]
+template = "LogTruppe"
+zug = "Log"
+names = "Log-M,Log-VG,Log-V,TS"
+special = ""
+
+[[thw]]
+template = "LogGruppe"
+zug = "Log"
+names = "Log-MW,Log-V,Log"
+special = ""
+
+[[thw]]
+template = "Truppe"
 zug = "Log"
 names = "Log"
 special = ""
@@ -164,4 +231,16 @@ zug = "Log"
 names = "Log"
 special = ""
 
+##### Sonstig #####
 
+[[thw]]
+template = "LogVerband"
+zug = "Log"
+names = ",Logistik"
+special = ""
+
+[[thw]]
+template = "Zug"
+zug = "VOST"
+names = "VOST"
+special = ""
