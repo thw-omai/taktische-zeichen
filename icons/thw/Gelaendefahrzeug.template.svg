@@ -1,0 +1,9 @@
+{% extends "thw/basic_lkw.template.xml" %}
+{% block title %}Abrollbehälter{% endblock title %}
+{% block type %}
+<path d="M10,64 L10,192 L246,192 L246,64 Q128,100 10,64 Z" fill="none" stroke-width="1" stroke="{{thw_main}}" />
+<ellipse cx="40" cy="210" rx="10" ry="10" stroke="{{thw_main}}" fill="none" stroke-width="5" />
+<ellipse cx="128" cy="210" rx="10" ry="10" stroke="{{thw_main}}" fill="none" stroke-width="5" />
+<ellipse cx="216" cy="210" rx="10" ry="10" stroke="{{thw_main}}" fill="none" stroke-width="5" />
+
+{% endblock type %}

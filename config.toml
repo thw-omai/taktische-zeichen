@@ -3,14 +3,44 @@ enable_png = false
 [[thw]]
 template = "Helfer"
 zug = "Alle"
-names = ",KF,SAN"
+names = ",KF,SAN,peer,psFK,AB,Ko,OJB,SM,StvOB,Vw"
+special = ""
+dir = "personen"
+
+[[thw]]
+template = "Helfer"
+zug = "OV"
+names = "AB,BÖH"
 special = ""
 dir = "personen"
 
 [[thw]]
 template = "Fachberater"
 zug = "OV"
-names = "FaBe,TeBe"
+names = "FaBe,TeBe,THW,BFB,Flugleiter"
+special = ""
+dir = "personen"
+
+[[thw]]
+template = "Fuehrung"
+zug = "OV"
+names = ",OB"
+special = ""
+dir = "personen"
+
+#### FK ####
+
+[[thw]]
+template = "Helfer"
+zug = "Alle"
+names = "IuK,RiFu"
+special = ""
+dir = "personen"
+
+[[thw]]
+template = "Fuehrung"
+zug = "FK"
+names = "FmFü,LdF"
 special = ""
 dir = "personen"
 
@@ -105,6 +135,20 @@ names = "WV"
 special = ""
 dir = "einheit"
 
+[[thw]]
+template = "Anhaenger"
+zug = "FK"
+names = "FüLa,K 1t,RiFu"
+special = ""
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Fahrzeug"
+zug = "FK"
+names = "FmKW,FüKomKW,FüKW"
+special = ""
+dir = "fahrzeuge"
+
 
 ##### TZ #####
 
@@ -119,7 +163,7 @@ dir = "personen"
 [[thw]]
 template = "Truppfuehrer"
 zug = "TZ"
-names = "ESS"
+names = "I,N,BT,E,Öl,Sp,L,ÖGA,B,SB,BrB,TW,W,ENT,GA,JuGr,SEEBA,SEEWA,SEELift,ESS,MHP,UL"
 special = ""
 dir = "personen"
 
@@ -218,7 +262,110 @@ special = ""
 dir = "einheit"
 
 
+[[thw]]
+template = "Anhaenger"
+zug = "TZ"
+names = "NEA"
+special = ",50 kVA LiMa,200 kVA,600 kVA"
+dir = "fahrzeuge"
+
+
+[[thw]]
+template = "Anhaenger"
+zug = "TZ"
+names = "SwPu"
+special = ",5000 l pro min,15000 l pro min,25000 l pro min"
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Anhaenger"
+zug = "TZ"
+names = "O 2t"
+special = ",A,B"
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Abrollbehaelter"
+zug = "TZ"
+names = ",Wks"
+special = ""
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Gelaendefahrzeug"
+zug = "TZ"
+names = ",BRmG,"
+special = ""
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Boot"
+zug = "TZ"
+names = ",kl Boot,MzAB,MzB,MzPt,RuSB,SchlB"
+special = ""
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Fahrzeug"
+zug = "TZ"
+names = ",ERS, GKW 7t, GKW I, GKW II,LKW-Lkr,MTW FGr,MTW,PKW,THV"
+special = ""
+dir = "fahrzeuge"
+
+
+[[thw]]
+template = "Fahrzeug"
+zug = "TZ"
+names = "Stapler"
+special = ",2t,3t"
+dir = "fahrzeuge"
+
+
+[[thw]]
+template = "Fahrzeug"
+zug = "TZ"
+names = "Telelader"
+special = ",2t"
+dir = "fahrzeuge"
+
+
+[[thw]]
+template = "Fahrzeug"
+zug = "TZ"
+names = "LKW-K"
+special = ",9t,LKr 1.5t,LKr"
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Fahrzeug"
+zug = "TZ"
+names = "LKW-Lbw"
+special = ",7t"
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Gelaendefahrzeug"
+zug = "TZ"
+names = ",Stapler,Kipper,,MLW II,MLW III,MLW IV,MLW V,MzGW,MzKW,PKW,PKW WV,Bagger,Radlader"
+special = ""
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Kettenfahrzeug"
+zug = "TZ"
+names = ",Bagger"
+special = ""
+dir = "fahrzeuge"
+
+[[thw]]
+template = "Sattelzug"
+zug = "TZ"
+names = ",SZM,WLF"
+special = ""
+dir = "fahrzeuge"
+
 ##### LOG #####
+
 [[thw]]
 template = "Zugfuehrer"
 zug = "Log"
@@ -283,3 +430,25 @@ zug = "VOST"
 names = "VOST"
 special = ""
 dir = "einheit"
+
+
+[[thw]]
+template = "Gebaeude"
+zug = "Alle"
+names = ",OV,RST,LV,Ltg,AZ,Log"
+special = ""
+dir = "gebäude"
+
+[[thw]]
+template = "Gebaeude"
+zug = "Alle"
+names = "LV"
+special = "HeRpSl,Bayern,Küste,BaWü,BEBBST,HBNI,HHMVSH,SNTH"
+dir = "gebäude"
+
+[[thw]]
+template = "Anhaenger"
+zug = "Alle"
+names = ",0.5t,2t,6t,7t, BT 2t,DLE,FKH,I 2T,kl Boot,Kühl,LiMa,Log-MW 2t,MzAB,MzB,MzPt,PF 12t,RettH,Ru 12t,SchlB,Sp 2t,Spül,SEA,Tiefl 18t,TWAA,Wks"
+special = ""
+dir = "fahrzeuge"

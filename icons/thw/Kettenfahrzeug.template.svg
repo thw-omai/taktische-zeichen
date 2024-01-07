@@ -1,0 +1,5 @@
+{% extends "thw/basic_lkw.template.xml" %}
+{% block title %}LKW{% endblock title %}
+{% block type %}
+<path d="M24,200 l208,0 a10,10 180 0 1 0,20 l-208,0 a10,10 180 0 1 0,-20 Z" stroke="{{thw_main}}" fill="{{thw_secondary}}" stroke-width="5" />
+{% endblock type %}
