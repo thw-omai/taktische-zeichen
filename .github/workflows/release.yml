@@ -31,7 +31,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo build --release --all-features
+      - run: cargo run
+      - uses: vimtor/action-zip@v1.1
+        with:
+          files: build/*
+          recursive: true
+          dest: taktische-zeichen.zip
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: taktische-zeichen
+          include: taktische-zeichen.zip
           token: ${{ secrets.GITHUB_TOKEN }}
