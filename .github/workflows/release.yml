@@ -27,6 +27,7 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      - run: echo "enabled=false" >> helfer.toml
       - run: cargo run
       - uses: vimtor/action-zip@v1.1
         with:
