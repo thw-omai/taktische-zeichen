@@ -38,7 +38,7 @@ pub(crate) struct DescriptionObjects {
 #[derive(Debug, Deserialize)]
 pub(crate) struct HelferConfig {
     pub(crate) enabled: bool,
-    pub(crate) personen: Vec<Person>,
+    pub(crate) personen: Option<Vec<Person>>,
 }
 
 #[derive(Debug, Deserialize)]

@@ -46,7 +46,7 @@ fn main() {
         generate_svg("KatS", &mut tera, base_directory, &current);
     });
 
-    let thw_config = &helfer_config.personen;
+    let thw_config = &helfer_config.personen.unwrap_or(vec!{});
     if helfer_config.enabled {
         thw_config.iter().for_each(|person| {
             vec![true, false].iter().for_each(|inverted| {
