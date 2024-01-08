@@ -31,7 +31,7 @@ jobs:
       - run: cargo run
       - uses: vimtor/action-zip@v1.1
         with:
-          files: build/*
+          files: build/
           recursive: true
           dest: taktische-zeichen.zip
       - name: upload taktische-zeichen.zip
