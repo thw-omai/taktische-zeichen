@@ -16,9 +16,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: taiki-e/create-gh-release-action@v1
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - run: cargo run
+      - uses: vimtor/action-zip@v1.1
+        with:
+          files: build/*
+          recursive: true
+          dest: taktische-zeichen.zip
+      - name: upload taktische-zeichen.zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: taktische-zeichen.zip
+          asset_name: taktische-zeichen.zip
+          asset_content_type: application/zip
+
 
   upload-assets:
     needs: create-release
@@ -35,14 +59,8 @@ jobs:
         with:
           toolchain: stable
       - run: echo "enabled=false" >> helfer.toml
-      - run: cargo run
-      - uses: vimtor/action-zip@v1.1
-        with:
-          files: build/*
-          recursive: true
-          dest: taktische-zeichen.zip
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: taktische-zeichen
-          include: taktische-zeichen.zip
+          include: config.toml,helfer.toml,icons,LICENSE
           token: ${{ secrets.GITHUB_TOKEN }}
