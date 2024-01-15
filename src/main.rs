@@ -1,8 +1,16 @@
-use std::fs;
-use std::path::Path;
+use std::{fs, io};
+use std::collections::HashMap;
+use std::fmt::format;
+use std::fs::File;
+use std::io::Read;
+use std::path::{Component, Path};
 
+use base64::Engine;
+use base64::engine::general_purpose;
+use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use walkdir::WalkDir;
+
 use crate::config::DescriptionObjects;
 
 mod svg_tools;
@@ -91,8 +99,131 @@ fn main() {
     if cfg.enable_png {
         svg_tools::convert_svg()
     }
-    copy_static()
+    copy_static();
+
+    create_drawio()
 }
+
+#[derive(Serialize, Deserialize, Clone)]
+struct DrawIoLibEntry {
+    data: String,
+    //
+    w: i32,
+    h: i32,
+    title: String,
+    aspect: String,
+}
+
+fn create_drawio() {
+    let mut data: HashMap<String, Vec<DrawIoLibEntry>> = HashMap::new();
+    process_entries("build", |path| {
+        let base64 = file_to_base64(&path.to_str().unwrap());
+        let entry = DrawIoLibEntry {
+            data: format!("data:image/svg+xml;base64,{}", base64.unwrap()),
+            w: 256,
+            h: 256,
+            title: path_to_title("build", path),
+            aspect: "fixed".to_string(),
+        };
+        let map_id = path_to_id("build", path.parent().unwrap());
+        let mut vec = match data.get_mut(map_id.as_str()) {
+            None => Vec::new(),
+            Some(item) => item.to_vec()
+        };
+        vec.push(entry);
+        data.insert(map_id, vec);
+    });
+
+    fs::create_dir_all("build/drawio");
+
+    data.iter().for_each(|(key, item)| {
+        let json_string = serde_json::to_string(item).expect("Failed to serialize to JSON");
+
+
+        println!("Save to {}", format!("build/{}", key).as_str());
+        save_to_file(
+            format!("build/drawio/{}.xml", key).as_str(),
+            format!("<mxlibrary>{}</mxlibrary>", &json_string).as_str(),
+        )
+    });
+}
+
+fn path_to_title(
+    match_name: &str,
+    path: &Path,
+) -> String {
+    let mut result = String::new();
+
+    for component in path.components() {
+        if let Component::Normal(name) = component {
+            if name == match_name {
+                result.clear();
+            } else if name != "svg" {
+                result.push_str(name.to_str().unwrap_or("").replace("-", " ").as_str());
+                result.push(' ');
+            }
+        }
+    }
+
+    result.trim().trim_end_matches(".svg").to_string()
+}
+
+fn path_to_id(
+    match_name: &str,
+    path: &Path,
+) -> String {
+    let mut result = String::new();
+
+    for component in path.components() {
+        if let Component::Normal(name) = component {
+            if name == match_name {
+                result.clear();
+            } else if name != "svg" {
+                result.push_str(name.to_str().unwrap_or(""));
+                result.push('-');
+            }
+        }
+    }
+
+    let mut result = result.trim_end_matches("-").to_string();
+    if (result.contains("original")) {
+        result = result.trim_start_matches("original-").to_string();
+        result = format!("{}-original", result);
+    } else if (result.contains("inverted")) {
+        result = result.trim_start_matches("inverted-").to_string();
+        result = format!("{}-inverted", result);
+    }
+    result
+}
+
+fn process_entries<F>(
+    directory: &str,
+    mut process_fn: F,
+) where
+    F: FnMut(&Path),
+{
+    for entry in WalkDir::new(directory).into_iter().filter_map(|e| e.ok()) {
+        if let Some(extension) = entry.path().extension() {
+            if extension == "svg" {
+                process_fn(entry.path());
+            }
+        }
+    }
+}
+
+fn file_to_base64(
+    file_path: &str
+) -> io::Result<String> {
+    let mut file = File::open(file_path)?;
+
+    let mut content = String::new();
+    file.read_to_string(&mut content)?;
+
+    let base64_encoded = general_purpose::STANDARD.encode(&content);
+
+    Ok(base64_encoded)
+}
+
 
 pub(crate) fn copy_static() {
     for entry in WalkDir::new("static").into_iter().filter_map(|e| e.ok()) {

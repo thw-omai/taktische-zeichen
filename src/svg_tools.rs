@@ -5,34 +5,31 @@ use resvg::{tiny_skia, Tree, usvg};
 use resvg::usvg::{fontdb, TextRendering, TreeParsing, TreeTextToPath};
 use tiny_skia::{Pixmap, Transform};
 use usvg::Options;
-use walkdir::WalkDir;
+
+use crate::process_entries;
 
 pub(crate) fn convert_svg() {
-    for entry in WalkDir::new("build").into_iter().filter_map(|e| e.ok()) {
-        if let Some(extension) = entry.path().extension() {
-            if extension == "svg" {
-                let svg_path = entry.path().to_str().unwrap().to_string();
-                let png_path = format!(
-                    "{}.png",
-                    entry.path().with_extension("").to_str().unwrap()
-                ).replace("svg/", "png/");
+    process_entries("build", |entry| {
+        let svg_path = entry.to_str().unwrap().to_string();
+        let png_path = format!(
+            "{}.png",
+            entry.with_extension("").to_str().unwrap()
+        ).replace("svg/", "png/");
 
-                let parent = Path::new(&png_path).parent().expect("Error get parent dir");
-                if !parent.exists() {
-                    fs::create_dir_all(parent).expect("Unable to create directory");
-                }
-
-                convert_svg_to_png(&svg_path, &png_path);
-
-                println!("Converted: {} -> {}", svg_path, png_path);
-            }
+        let parent = Path::new(&png_path).parent().expect("Error get parent dir");
+        if !parent.exists() {
+            fs::create_dir_all(parent).expect("Unable to create directory");
         }
-    }
+
+        convert_svg_to_png(&svg_path, &png_path);
+
+        println!("Converted: {} -> {}", svg_path, png_path);
+    });
 }
 
 fn convert_svg_to_png(
     svg_path: &str,
-    png_path: &str
+    png_path: &str,
 ) {
     let mut opt = Options::default();
     opt.text_rendering = TextRendering::GeometricPrecision;
@@ -44,7 +41,6 @@ fn convert_svg_to_png(
     let svg_data = fs::read(svg_path).unwrap();
     let mut tree_usvg = usvg::Tree::from_data(&svg_data, &opt).unwrap();
     tree_usvg.convert_text(&fontdb);
-
 
 
     let tree = Tree::from_usvg(&tree_usvg);
