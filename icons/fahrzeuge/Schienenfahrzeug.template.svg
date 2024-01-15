@@ -1,0 +1,11 @@
+{% extends "fahrzeuge/basic_lkw.template.xml" %}
+{% block title %}LKW{% endblock title %}
+{% block type %}
+<path d="M10,64 L10,192 L246,192 L246,64 Q128,100 10,64 Z" fill="none" stroke-width="1" stroke="{{main_color}}" />
+
+<ellipse cx="24" cy="210" rx="10" ry="10" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5" />
+<ellipse cx="50" cy="210" rx="10" ry="10" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5" />
+<ellipse cx="206" cy="210" rx="10" ry="10" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5" />
+<ellipse cx="232" cy="210" rx="10" ry="10" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5" />
+
+{% endblock type %}

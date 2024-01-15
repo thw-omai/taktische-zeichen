@@ -456,23 +456,23 @@ dir = "fahrzeuge"
 
 
 [[fw]]
-template="Gruppenfuehrer"
-zug=""
-names=""
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
 special = ""
 dir = "personen"
 
 [[fw]]
-template="Fuehrung"
-zug=""
-names=",A,S,W"
+template = "Fuehrung"
+zug = ""
+names = ",A,S,W"
 special = ""
 dir = "personen"
 
 [[fw]]
-template="Helfer"
-zug=""
-names=",A,Ma,Me,S,W"
+template = "Helfer"
+zug = ""
+names = ",A,Ma,Me,S,W"
 special = ""
 dir = "personen"
 
@@ -484,36 +484,245 @@ special = ""
 dir = "gebaeude"
 
 [[bw]]
-template="Gruppenfuehrer"
-zug=""
-names=""
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
 special = ""
 dir = "personen"
 
+[[bw]]
+template = "Fuehrung"
+zug = ""
+names = ""
+special = ""
+dir = "personen"
+
+[[bw]]
+template = "Truppfuehrer"
+zug = ""
+names = ""
+special = ""
+dir = "personen"
+
+[[bw]]
+template = "Zugfuehrer"
+zug = ""
+names = ""
+special = ""
+dir = "personen"
+
+[[bw]]
+template = "Staffelfuehrer"
+zug = ""
+names = ""
+special = ""
+dir = "personen"
+
+[[bw]]
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
+special = ""
+dir = "personen"
+
+[[bw]]
+template = "GruppeOhneFuehrung"
+zug = ""
+names = ",BW"
+special = ""
+dir = "einheit"
+
+[[bw]]
+template = "Kettenfahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[bw]]
+template = "Fahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[bw]]
+template = "Gelaendefahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Fuehrungsgruppe"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Fuehrungstruppe"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Fuehrungsstaffel"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Gruppe"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Truppe"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Zug"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Staffel"
+zug = ""
+names = ""
+special = ""
+dir = "einheit"
+
+[[alle]]
+template = "Abrollbehaelter"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Boot"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Schienenfahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Kraftrad"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Gelaendefahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Fahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+
+[[alle]]
+template = "Kettenfahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+
+[[alle]]
+template = "Hubschrauber"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+
+[[alle]]
+template = "Flugzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Fahrzeug"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Fahrrad"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
+[[alle]]
+template = "Anhaenger"
+zug = ""
+names = ""
+special = ""
+dir = "fahrzeuge"
+
 [[pol]]
-template="Gruppenfuehrer"
-zug=""
-names=""
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
 special = ""
 dir = "personen"
 
 [[zoll]]
-template="Gruppenfuehrer"
-zug=""
-names=""
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
 special = ""
 dir = "personen"
 
 [[rettung]]
-template="Gruppenfuehrer"
-zug=""
-names=""
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
 special = ""
 dir = "personen"
 
 [[kats]]
-template="Gruppenfuehrer"
-zug=""
-names=""
+template = "Gruppenfuehrer"
+zug = ""
+names = ""
 special = ""
 dir = "personen"
+
+
+
+
+[[thw]]
+template = "Stelle"
+zug = "Alle"
+names = ",EAL,EL,BR500,Flgr,TEL,AFüSt,FüStab,KatSL,UEAL,ÖEL"
+special = ""
+dir = "Führungsstelle"

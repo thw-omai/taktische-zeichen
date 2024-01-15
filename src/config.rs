@@ -23,6 +23,7 @@ pub(crate) struct Config {
     pub(crate) pol: Vec<DescriptionObjects>,
     pub(crate) bw: Vec<DescriptionObjects>,
     pub(crate) kats: Vec<DescriptionObjects>,
+    pub(crate) alle: Vec<DescriptionObjects>,
 }
 
 #[derive(Debug, Deserialize)]

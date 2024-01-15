@@ -2,6 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use tera::{Context, Tera};
+use walkdir::WalkDir;
 use crate::config::DescriptionObjects;
 
 mod svg_tools;
@@ -45,8 +46,11 @@ fn main() {
     cfg.kats.iter().for_each(|current| {
         generate_svg("KatS", &mut tera, base_directory, &current);
     });
+    cfg.alle.iter().for_each(|current| {
+        generate_svg("Alle", &mut tera, base_directory, &current);
+    });
 
-    let thw_config = &helfer_config.personen.unwrap_or(vec!{});
+    let thw_config = &helfer_config.personen.unwrap_or(vec! {});
     if helfer_config.enabled {
         thw_config.iter().for_each(|person| {
             vec![true, false].iter().for_each(|inverted| {
@@ -86,6 +90,35 @@ fn main() {
     }
     if cfg.enable_png {
         svg_tools::convert_svg()
+    }
+    copy_static()
+}
+
+pub(crate) fn copy_static() {
+    for entry in WalkDir::new("static").into_iter().filter_map(|e| e.ok()) {
+        if let Some(extension) = entry.path().extension() {
+            if extension == "svg" {
+                let old_svg_path = entry.path()
+                    .to_str()
+                    .unwrap()
+                    .to_string();
+                let new_svg_path = entry.path()
+                    .to_string_lossy()
+                    .replace("static/", "build/original/svg/");
+
+                let parent = Path::new(&new_svg_path)
+                    .parent()
+                    .expect("Error get parent dir");
+                if !parent.exists() {
+                    fs::create_dir_all(parent)
+                        .expect("Unable to create directory");
+                }
+
+                fs::copy(old_svg_path.clone(), new_svg_path.clone()).expect("Couldn't copy file");
+
+                println!("Copied: {} -> {}", old_svg_path, new_svg_path);
+            }
+        }
     }
 }
 
@@ -226,6 +259,7 @@ fn process_file_common(
         "rettung" => { "#fff" }
         "pol" => { "#fff" }
         "bw" => { "#fff" }
+        "alle" => { "#000" }
         &_ => { "#fff" }
     };
     let secondary = match organisation.to_lowercase().as_str() {
@@ -236,12 +270,17 @@ fn process_file_common(
         "bw" => { "#996633" }
         "rettung" => { "#000" }
         "kats" => { "#DF6711" }
+        "alle" => { "#fff" }
         &_ => { "#000" }
     };
 
 
     context.insert("value", value);
-    context.insert("organisation", organisation);
+    if organisation.to_lowercase() != "alle" {
+        context.insert("organisation", organisation);
+    } else {
+        context.insert("organisation", "");
+    }
     context.insert("ort", &ort);
     context.insert("helfer", &helfer);
     context.insert("special", &special);

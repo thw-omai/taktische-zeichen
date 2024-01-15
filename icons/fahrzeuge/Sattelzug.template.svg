@@ -3,6 +3,6 @@
 {% block type %}
 <path d="M3,58 L3,199 L251,199" fill="none" stroke-width="2" stroke="{{main_color}}" />
 
-<ellipse cx="40" cy="209" rx="10" ry="10" stroke="{{main_color}}" fill="none" stroke-width="5" />
-<ellipse cx="216" cy="209" rx="10" ry="10" stroke="{{main_color}}" fill="none" stroke-width="5"  />
+<ellipse cx="40" cy="209" rx="10" ry="10" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5" />
+<ellipse cx="216" cy="209" rx="10" ry="10" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5"  />
 {% endblock type %}

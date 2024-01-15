@@ -2,5 +2,5 @@
 {% block title %}Abrollbehälter{% endblock title %}
 {% block type %}
 <path d="M10,64 L10,192 L246,192 L246,64 Q128,100 10,64 Z" fill="none" stroke-width="1" stroke="{{main_color}}" />
-<ellipse cx="8" cy="80" rx="5" ry="5" stroke="{{main_color}}" fill="none" stroke-width="5" clip-path="url(#hook)" />
+<ellipse cx="8" cy="80" rx="5" ry="5" stroke="{{main_color}}" fill="{{secondary_color}}" stroke-width="5" clip-path="url(#hook)" />
 {% endblock type %}
