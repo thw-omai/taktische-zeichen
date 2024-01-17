@@ -1,4 +1,7 @@
 # 0.3.0
+* Adds multiple png sizes
+
+# 0.3.0
 * Adds draw io libraries
 
 # 0.2.0

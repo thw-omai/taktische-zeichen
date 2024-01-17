@@ -1,4 +1,4 @@
-enable_png = false
+enable_png = true
 
 [[thw]]
 template = "Helfer"

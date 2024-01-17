@@ -2,18 +2,18 @@ use std::{
     collections::HashMap,
     fs::{
         self,
-        File
+        File,
     },
     io::{
         self,
-        Read
+        Read,
     },
-    path::{Component, Path}
+    path::{Component, Path,PathBuf},
 };
 
 use base64::{
     Engine,
-    engine::general_purpose
+    engine::general_purpose,
 };
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
@@ -55,10 +55,10 @@ fn main() {
         generate_svg("Rettung", &mut tera, &current);
     });
     cfg.kats.iter().for_each(|current| {
-        generate_svg("KatS", &mut tera,  &current);
+        generate_svg("KatS", &mut tera, &current);
     });
     cfg.alle.iter().for_each(|current| {
-        generate_svg("Alle", &mut tera,  &current);
+        generate_svg("Alle", &mut tera, &current);
     });
 
     let thw_config = &helfer_config
@@ -122,7 +122,7 @@ struct DrawIoLibEntry {
 
 fn create_drawio() {
     let mut data: HashMap<String, Vec<DrawIoLibEntry>> = HashMap::new();
-    process_entries("build", |path| {
+    process_entries("build", |path: PathBuf| {
         let entry = DrawIoLibEntry {
             data: format!(
                 "data:image/svg+xml;base64,{}",
@@ -130,7 +130,7 @@ fn create_drawio() {
             ),
             w: 256,
             h: 256,
-            title: path_to_title("build", path),
+            title: path_to_title("build", path.clone()),
             aspect: "fixed".to_string(),
         };
         let map_id = path_to_id("build", path.parent().unwrap());
@@ -159,7 +159,7 @@ fn create_drawio() {
 
 fn path_to_title(
     match_name: &str,
-    path: &Path,
+    path: PathBuf,
 ) -> String {
     let mut result = String::new();
 
@@ -215,17 +215,24 @@ fn path_to_id(
 
 fn process_entries<F>(
     directory: &str,
-    mut process_fn: F,
+    process_fn: F,
 ) where
-    F: FnMut(&Path),
+    F: FnMut(PathBuf),
 {
-    for entry in WalkDir::new(directory).into_iter().filter_map(|e| e.ok()) {
-        if let Some(extension) = entry.path().extension() {
-            if extension == "svg" {
-                process_fn(entry.path());
-            }
-        }
-    }
+    WalkDir::new(directory)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .filter_map(|entry| {
+            return if let Some(extension) = entry.path().extension() {
+                if extension == "svg" {
+                    Some(entry)
+                } else {
+                    None
+                }
+            } else { None };
+        })
+        .map(|entry| entry.path().to_path_buf())
+        .for_each(process_fn);
 }
 
 fn file_to_base64(
@@ -372,7 +379,7 @@ fn process_file_common(
 
     context.insert("value", value);
     if organisation.to_lowercase() != "alle" {
-        context.insert("organisation", organisation);
+        context.insert("organisation", &organisation.to_uppercase());
     } else {
         context.insert("organisation", "");
     }
