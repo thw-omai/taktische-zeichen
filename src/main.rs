@@ -1,12 +1,20 @@
-use std::{fs, io};
-use std::collections::HashMap;
-use std::fmt::format;
-use std::fs::File;
-use std::io::Read;
-use std::path::{Component, Path};
+use std::{
+    collections::HashMap,
+    fs::{
+        self,
+        File
+    },
+    io::{
+        self,
+        Read
+    },
+    path::{Component, Path}
+};
 
-use base64::Engine;
-use base64::engine::general_purpose;
+use base64::{
+    Engine,
+    engine::general_purpose
+};
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use walkdir::WalkDir;
@@ -19,7 +27,6 @@ mod config;
 fn main() {
     let (cfg, helfer_config) = config::parse();
 
-
     let mut tera = match Tera::new("icons/**/*") {
         Ok(t) => t,
         Err(e) => {
@@ -29,36 +36,34 @@ fn main() {
     };
     tera.autoescape_on(vec![".template.svg"]);
 
-
-    let base_directory = "icons";
-
-
     cfg.thw.iter().for_each(|current| {
-        generate_svg("THW", &mut tera, base_directory, &current);
+        generate_svg("THW", &mut tera, &current);
     });
     cfg.fw.iter().for_each(|current| {
-        generate_svg("FW", &mut tera, base_directory, &current);
+        generate_svg("FW", &mut tera, &current);
     });
     cfg.pol.iter().for_each(|current| {
-        generate_svg("POL", &mut tera, base_directory, &current);
+        generate_svg("POL", &mut tera, &current);
     });
     cfg.zoll.iter().for_each(|current| {
-        generate_svg("Zoll", &mut tera, base_directory, &current);
+        generate_svg("Zoll", &mut tera, &current);
     });
     cfg.bw.iter().for_each(|current| {
-        generate_svg("BW", &mut tera, base_directory, &current);
+        generate_svg("BW", &mut tera, &current);
     });
     cfg.rettung.iter().for_each(|current| {
-        generate_svg("Rettung", &mut tera, base_directory, &current);
+        generate_svg("Rettung", &mut tera, &current);
     });
     cfg.kats.iter().for_each(|current| {
-        generate_svg("KatS", &mut tera, base_directory, &current);
+        generate_svg("KatS", &mut tera,  &current);
     });
     cfg.alle.iter().for_each(|current| {
-        generate_svg("Alle", &mut tera, base_directory, &current);
+        generate_svg("Alle", &mut tera,  &current);
     });
 
-    let thw_config = &helfer_config.personen.unwrap_or(vec! {});
+    let thw_config = &helfer_config
+        .personen
+        .unwrap_or(vec! {});
     if helfer_config.enabled {
         thw_config.iter().for_each(|person| {
             vec![true, false].iter().for_each(|inverted| {
@@ -75,22 +80,24 @@ fn main() {
                         );
                         let filename = format!(
                             "{}/{}/{}.template.svg",
-                            base_directory,
+                            "icons",
                             &person.organisation,
                             val
                         );
 
-                        process_file_helfer(
+                        process_file_common(
                             &filename,
                             &target_file_path,
                             &*person.organisation,
                             &person.template,
                             *inverted,
                             &*val,
+                            "",
+                            "",
                             helfer,
                             "personen",
                             tera.clone(),
-                        );
+                        )
                     });
                 });
             });
@@ -107,7 +114,6 @@ fn main() {
 #[derive(Serialize, Deserialize, Clone)]
 struct DrawIoLibEntry {
     data: String,
-    //
     w: i32,
     h: i32,
     title: String,
@@ -117,9 +123,11 @@ struct DrawIoLibEntry {
 fn create_drawio() {
     let mut data: HashMap<String, Vec<DrawIoLibEntry>> = HashMap::new();
     process_entries("build", |path| {
-        let base64 = file_to_base64(&path.to_str().unwrap());
         let entry = DrawIoLibEntry {
-            data: format!("data:image/svg+xml;base64,{}", base64.unwrap()),
+            data: format!(
+                "data:image/svg+xml;base64,{}",
+                file_to_base64(&path.to_str().unwrap()).unwrap()
+            ),
             w: 256,
             h: 256,
             title: path_to_title("build", path),
@@ -134,11 +142,12 @@ fn create_drawio() {
         data.insert(map_id, vec);
     });
 
-    fs::create_dir_all("build/drawio");
+    fs::create_dir_all("build/drawio")
+        .expect("Couldn't create drawio directory");
 
     data.iter().for_each(|(key, item)| {
-        let json_string = serde_json::to_string(item).expect("Failed to serialize to JSON");
-
+        let json_string = serde_json::to_string(item)
+            .expect("Failed to serialize to JSON");
 
         println!("Save to {}", format!("build/{}", key).as_str());
         save_to_file(
@@ -159,13 +168,21 @@ fn path_to_title(
             if name == match_name {
                 result.clear();
             } else if name != "svg" {
-                result.push_str(name.to_str().unwrap_or("").replace("-", " ").as_str());
+                result.push_str(
+                    name.to_str()
+                        .unwrap_or("")
+                        .replace("-", " ")
+                        .as_str()
+                );
                 result.push(' ');
             }
         }
     }
 
-    result.trim().trim_end_matches(".svg").to_string()
+    result
+        .trim()
+        .trim_end_matches(".svg")
+        .to_string()
 }
 
 fn path_to_id(
@@ -186,10 +203,10 @@ fn path_to_id(
     }
 
     let mut result = result.trim_end_matches("-").to_string();
-    if (result.contains("original")) {
+    if result.contains("original") {
         result = result.trim_start_matches("original-").to_string();
         result = format!("{}-original", result);
-    } else if (result.contains("inverted")) {
+    } else if result.contains("inverted") {
         result = result.trim_start_matches("inverted-").to_string();
         result = format!("{}-inverted", result);
     }
@@ -219,9 +236,7 @@ fn file_to_base64(
     let mut content = String::new();
     file.read_to_string(&mut content)?;
 
-    let base64_encoded = general_purpose::STANDARD.encode(&content);
-
-    Ok(base64_encoded)
+    Ok(general_purpose::STANDARD.encode(&content))
 }
 
 
@@ -256,12 +271,11 @@ pub(crate) fn copy_static() {
 fn generate_svg(
     organisation: &str,
     tera: &mut Tera,
-    base_directory: &str,
     current: &&DescriptionObjects,
 ) {
     let mut filename = format!(
         "{}/{}/{}/{}.template.svg",
-        base_directory,
+        "icons",
         organisation,
         current.zug,
         current.template
@@ -269,7 +283,7 @@ fn generate_svg(
     if !Path::new(&filename).exists() {
         filename = format!(
             "{}/{}/{}.template.svg",
-            base_directory,
+            "icons",
             current.zug,
             current.template
         );
@@ -298,7 +312,7 @@ fn generate_svg(
                     )),
                 );
 
-                process_file(
+                process_file_common(
                     &filename,
                     &target_file_path,
                     organisation,
@@ -306,64 +320,14 @@ fn generate_svg(
                     *inverted,
                     name,
                     &*special,
+                    "",
+                    "",
                     &*current.dir,
                     tera.clone(),
-                );
+                )
             });
         });
     });
-}
-
-fn process_file(
-    file_path: &str,
-    target_file_path: &str,
-    organisation: &str,
-    name: &str,
-    inverted: bool,
-    value: &str,
-    special: &str,
-    dir: &str,
-    tera: Tera,
-) {
-    process_file_common(
-        file_path,
-        target_file_path,
-        organisation,
-        name,
-        inverted,
-        value,
-        special,
-        "",
-        "",
-        dir,
-        tera,
-    )
-}
-
-fn process_file_helfer(
-    file_path: &str,
-    target_file_path: &str,
-    organisation: &str,
-    name: &str,
-    inverted: bool,
-    value: &str,
-    helfer: &str,
-    dir: &str,
-    tera: Tera,
-) {
-    process_file_common(
-        file_path,
-        target_file_path,
-        organisation,
-        name,
-        inverted,
-        value,
-        "",
-        "",
-        helfer,
-        dir,
-        tera,
-    )
 }
 
 fn process_file_common(
@@ -430,7 +394,7 @@ fn process_file_common(
             name
         ).as_str(),
         &context,
-    ).expect("TODO: panic message");
+    ).expect("Couldn't parse template");
     save_to_file(target_file_path, &content)
 }
 
