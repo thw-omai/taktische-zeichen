@@ -8,9 +8,12 @@ edition = "2021"
 [dependencies]
 tera = { version = "1", default-features = false }
 serde = { version = "1.0.194", features = ["derive"] }
-resvg = { version = "0.37.0", features = ["default"]}
+resvg = { version = "0.37.0", features = ["default"] }
 walkdir = "2.4.0"
 image = "0.24.7"
 toml = "0.8.8"
 base64 = "0.21.7"
 serde_json = "1.0.111"
+sha2 = "0.10.8"
+indicatif = "0.17.8"
+rayon = "1.10.0"

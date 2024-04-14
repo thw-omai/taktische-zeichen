@@ -3,6 +3,8 @@ use std::{
     thread,
     path::{Path, PathBuf},
 };
+use std::collections::HashMap;
+use indicatif::ProgressBar;
 
 use resvg::{
     tiny_skia,
@@ -20,27 +22,53 @@ use tiny_skia::{Pixmap, Transform};
 use usvg::Options;
 
 use crate::process_entries;
+use crate::utils::calc_hash;
 
-pub(crate) fn convert_svg() {
+pub(crate) fn convert_svg(
+    progress_bar: ProgressBar,
+    hashes: HashMap<String, String>,
+) {
     let mut v = Vec::<thread::JoinHandle<()>>::new();
     process_entries("build", |entry: PathBuf| {
+        let pb = progress_bar.clone();
+        let cloned_hashes = hashes.clone();
         let jh = thread::spawn(move || {
-            let svg_path = entry.to_str()
-                .unwrap()
-                .to_string();
+            let binding = cloned_hashes.clone();
+            let old_checksum = match binding.get(entry.to_str().unwrap()) {
+                Some(x) => x,
+                None => "CREATE",
+            };
+            let new_checksum = calc_hash(entry.to_str().unwrap());
 
-            [128, 256, 512, 1024, 2048].iter().for_each(|size| {
-                let png_path = format!(
+            if old_checksum != new_checksum {
+                let svg_path = entry
+                    .to_str()
+                    .unwrap()
+                    .to_string();
+                let original_png_path = format!(
                     "{}.png",
-                    entry.with_extension("")
+                    entry
+                        .with_extension("")
                         .to_str()
                         .unwrap()
-                ).replace("svg/", &*format!("png/{}/", size.to_string().as_str()));
+                );
 
-                convert_svg_to_png(&svg_path, &png_path, *size as f32);
+                [128, 256, 512, 1024, 2048].iter().for_each(|size| {
+                    let png_path = original_png_path.replace(
+                        "svg/",
+                        &*format!("png/{}/", size.to_string().as_str())
+                    );
 
-                println!("Converted: {} -> {}", svg_path, png_path);
-            });
+                    convert_svg_to_png(
+                        &svg_path,
+                        &png_path,
+                        *size as f32
+                    );
+
+                    pb.inc(1);
+                    pb.set_message(format!("Converted: {} -> {}", svg_path, png_path));
+                });
+            }
         });
         v.push(jh);
     });
@@ -48,6 +76,7 @@ pub(crate) fn convert_svg() {
     for jh in v.into_iter() {
         jh.join().unwrap();
     }
+    progress_bar.finish_with_message("finished");
 }
 
 fn convert_svg_to_png(

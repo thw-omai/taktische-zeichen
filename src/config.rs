@@ -7,13 +7,12 @@ pub fn parse() -> (Config, HelferConfig) {
     let helfer_text = fs::read_to_string("helfer.toml").expect("Couldn't parse helfer file.");
 
     let config: Config = toml::from_str(&*config_text).unwrap();
-
     let helfer_config: HelferConfig = toml::from_str(&*helfer_text).unwrap();
 
     return (config, helfer_config);
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize,Clone)]
 pub(crate) struct Config {
     pub(crate) enable_png: bool,
     pub(crate) thw: Vec<DescriptionObjects>,
@@ -26,7 +25,7 @@ pub(crate) struct Config {
     pub(crate) alle: Vec<DescriptionObjects>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub(crate) struct DescriptionObjects {
     pub(crate) template: String,
     pub(crate) zug: String,
@@ -36,13 +35,13 @@ pub(crate) struct DescriptionObjects {
 }
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub(crate) struct HelferConfig {
     pub(crate) enabled: bool,
     pub(crate) personen: Option<Vec<Person>>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub(crate) struct Person {
     pub(crate) helfer: String,
     pub(crate) organisation: String,
