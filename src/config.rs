@@ -2,14 +2,14 @@ use std::fs;
 
 use serde::Deserialize;
 
-pub fn parse() -> (Config, HelferConfig) {
+pub fn parse() -> (Config, VolunteerConfig) {
     let config_text = fs::read_to_string("config.toml").expect("Couldn't parse config file.");
-    let helfer_text = fs::read_to_string("helfer.toml").expect("Couldn't parse helfer file.");
+    let volunteer_text = fs::read_to_string("volunteer.toml").expect("Couldn't parse volunteer file.");
 
     let config: Config = toml::from_str(&*config_text).unwrap();
-    let helfer_config: HelferConfig = toml::from_str(&*helfer_text).unwrap();
+    let volunteer_config: VolunteerConfig = toml::from_str(&*volunteer_text).unwrap();
 
-    return (config, helfer_config);
+    return (config, volunteer_config);
 }
 
 #[derive(Debug, Deserialize,Clone)]
@@ -36,14 +36,14 @@ pub(crate) struct DescriptionObjects {
 
 
 #[derive(Debug, Deserialize, Clone)]
-pub(crate) struct HelferConfig {
+pub(crate) struct VolunteerConfig {
     pub(crate) enabled: bool,
     pub(crate) personen: Option<Vec<Person>>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
 pub(crate) struct Person {
-    pub(crate) helfer: String,
+    pub(crate) volunteer: String,
     pub(crate) organisation: String,
     pub(crate) zug: String,
     pub(crate) template: String,

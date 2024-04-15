@@ -1,11 +1,15 @@
 use std::{
     fs,
-    thread,
     path::{Path, PathBuf},
+    collections::HashMap,
+    string::String
 };
-use std::collections::HashMap;
-use indicatif::ProgressBar;
 
+use indicatif::ProgressBar;
+use rayon::{
+    iter::IntoParallelIterator,
+    iter::ParallelIterator
+};
 use resvg::{
     tiny_skia,
     Tree,
@@ -21,26 +25,24 @@ use resvg::{
 use tiny_skia::{Pixmap, Transform};
 use usvg::Options;
 
-use crate::process_entries;
+use crate::map_entries;
 use crate::utils::calc_hash;
 
 pub(crate) fn convert_svg(
     progress_bar: ProgressBar,
     hashes: HashMap<String, String>,
 ) {
-    let mut v = Vec::<thread::JoinHandle<()>>::new();
-    process_entries("build", |entry: PathBuf| {
-        let pb = progress_bar.clone();
-        let cloned_hashes = hashes.clone();
-        let jh = thread::spawn(move || {
-            let binding = cloned_hashes.clone();
-            let old_checksum = match binding.get(entry.to_str().unwrap()) {
+    let paths: Vec<(String, String, &i32)> = map_entries("build")
+        .iter()
+        .map(|entry: &PathBuf| {
+            let old_checksum = match hashes
+                .get(entry.to_str().unwrap()) {
                 Some(x) => x,
                 None => "CREATE",
             };
             let new_checksum = calc_hash(entry.to_str().unwrap());
 
-            if old_checksum != new_checksum {
+            return if old_checksum != new_checksum {
                 let svg_path = entry
                     .to_str()
                     .unwrap()
@@ -53,29 +55,37 @@ pub(crate) fn convert_svg(
                         .unwrap()
                 );
 
-                [128, 256, 512, 1024, 2048].iter().for_each(|size| {
-                    let png_path = original_png_path.replace(
-                        "svg/",
-                        &*format!("png/{}/", size.to_string().as_str())
-                    );
+                let paths_different_sizes: Vec<(String, String, &i32)> = [128, 256, 512, 1024, 2048]
+                    .iter()
+                    .map(|size| {
+                        let path = original_png_path.replace(
+                            "svg/",
+                            &*format!("png/{}/", size.to_string().as_str()),
+                        );
+                        (svg_path.clone(), path, size)
+                    })
+                    .collect();
+                paths_different_sizes
+            } else {
+                Vec::new()
+            };
+        })
+        .flatten()
+        .collect();
 
-                    convert_svg_to_png(
-                        &svg_path,
-                        &png_path,
-                        *size as f32
-                    );
 
-                    pb.inc(1);
-                    pb.set_message(format!("Converted: {} -> {}", svg_path, png_path));
-                });
-            }
-        });
-        v.push(jh);
+    paths. into_par_iter().for_each(|(svg_path, png_path, size)| {
+        let pb = progress_bar.clone();
+        convert_svg_to_png(
+            &svg_path,
+            &png_path,
+            *size as f32,
+        );
+
+        pb.inc(1);
+        pb.set_message(format!("Converted: {} -> {}", svg_path, png_path));
     });
 
-    for jh in v.into_iter() {
-        jh.join().unwrap();
-    }
     progress_bar.finish_with_message("finished");
 }
 

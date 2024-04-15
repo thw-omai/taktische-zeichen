@@ -1,5 +1,4 @@
 use std::{
-    thread::JoinHandle,
     collections::HashMap,
     fs::{
         self,
@@ -10,7 +9,10 @@ use std::{
         Read,
     },
     path::{Component, Path, PathBuf},
-    thread,
+    thread::{
+        self,
+        JoinHandle
+    },
     time::Duration,
 };
 
@@ -19,11 +21,9 @@ use base64::{
     engine::general_purpose,
 };
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
-use rayon::{
-    iter::{
-        IntoParallelIterator,
-        ParallelIterator,
-    }
+use rayon::iter::{
+    IntoParallelIterator,
+    ParallelIterator,
 };
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
@@ -37,7 +37,7 @@ mod config;
 mod utils;
 
 fn main() {
-    let (cfg, helfer_config) = config::parse();
+    let (cfg, volunteer_config) = config::parse();
 
     let mut hashes: HashMap<String, String> = HashMap::new();
     if cfg.enable_png {
@@ -57,21 +57,19 @@ fn main() {
     let spinner_style = ProgressStyle::with_template("{prefix:.bold.dim}[{pos:3} files][{elapsed:3}] {spinner} {wide_msg}")
         .unwrap()
         .tick_chars("⠁⠂⠄⡀⢀⠠⠐⠈ ");
-    let m = MultiProgress::new();
+    let mut m = MultiProgress::new();
 
 
     let handler: JoinHandle<()>;
-    if helfer_config.enabled {
+    if volunteer_config.enabled {
         let template_engine_clone = template_engine.clone();
-        let pb = m.add(ProgressBar::new_spinner());
-        pb.set_style(spinner_style.clone());
-        pb.set_prefix(format!("[{:>7}]", "Helfer"));
-        pb.enable_steady_tick(Duration::from_millis(100));
+        let pb;
+        (pb, m) = create_progress_bar(&spinner_style, m, "volunteer", false);
 
-        handler = thread::spawn(move || copy_helfer(
+        handler = thread::spawn(move || copy_volunteer(
             pb,
             template_engine_clone,
-            &mut helfer_config
+            &mut volunteer_config
                 .personen
                 .unwrap_or(vec! {}),
         ));
@@ -100,51 +98,61 @@ fn main() {
                 pb.clone(),
                 &item.clone(),
                 description.to_string().clone(),
-                &mut template_engine.clone()
+                &mut template_engine.clone(),
             );
         })
         .collect::<()>();
 
-    let pb = m.add(ProgressBar::new_spinner());
-    pb.set_style(spinner_style.clone());
-    pb.set_prefix(format!("[{:>7}]", "static"));
-    pb.enable_steady_tick(Duration::from_millis(100));
+    let mut pb;
+    (pb, m) = create_progress_bar(&spinner_style, m, "static", true);
     let handler2 = thread::spawn(move || copy_static(pb));
 
     let _ = handler.join();
     let _ = handler2.join();
 
     if cfg.enable_png {
-        let pb = ProgressBar::new_spinner();
-        pb.set_style(spinner_style.clone());
-        pb.set_prefix(format!("[{:>7}]", "png"));
-        pb.enable_steady_tick(Duration::from_millis(100));
+        (pb, m) = create_progress_bar(&spinner_style, m, "png", false);
 
         svg_tools::convert_svg(pb, hashes)
     }
-    let pb = ProgressBar::new_spinner();
-    pb.set_style(spinner_style.clone());
-    pb.set_prefix(format!("[{:>7}]", "drawio"));
-    pb.enable_steady_tick(Duration::from_millis(100));
+    let (pb, _m) = create_progress_bar(&spinner_style, m, "drawio", false);
 
     create_drawio(pb)
 }
 
-fn copy_helfer(
+fn create_progress_bar(
+    spinner_style: &ProgressStyle,
+    m: MultiProgress,
+    prefix: &str,
+    multi: bool,
+) -> (ProgressBar, MultiProgress) {
+    let pb;
+    if multi {
+        pb = m.add(ProgressBar::new_spinner());
+    } else {
+        pb = ProgressBar::new_spinner();
+    }
+    pb.set_style(spinner_style.clone());
+    pb.set_prefix(format!("[{:>7}]", prefix));
+    pb.enable_steady_tick(Duration::from_millis(100));
+    (pb, m)
+}
+
+fn copy_volunteer(
     pb: ProgressBar,
     template_engine: Tera,
-    helfer: &mut Vec<Person>,
+    volunteer: &mut Vec<Person>,
 ) {
-    helfer
+    volunteer
         .iter()
         .for_each(|person| {
             vec![true, false]
                 .iter()
                 .for_each(|inverted| {
                     person
-                        .helfer
+                        .volunteer
                         .split(",")
-                        .for_each(|helfer| {
+                        .for_each(|volunteer| {
                             person
                                 .value
                                 .split(",")
@@ -154,20 +162,14 @@ fn copy_helfer(
                                         if *inverted { "inverted" } else { "original" },
                                         &person.organisation,
                                         &person.zug,
-                                        &helfer,
+                                        &volunteer,
                                         person.template,
                                         val,
                                     );
-                                    let filename = format!(
-                                        "{}/{}/{}.template.svg",
-                                        "icons",
-                                        &person.organisation,
-                                        val
-                                    );
+
                                     pb.set_message(format!("Processed content of  {}", target_file_path));
                                     pb.inc(1);
                                     process_file_common(
-                                        &filename,
                                         &target_file_path,
                                         &*person.organisation,
                                         &person.template,
@@ -175,7 +177,7 @@ fn copy_helfer(
                                         &*val,
                                         "",
                                         "",
-                                        helfer,
+                                        volunteer,
                                         "personen",
                                         template_engine.clone(),
                                     )
@@ -317,14 +319,20 @@ fn path_to_id(
     }
     result
 }
-
 fn process_entries<F>(
     directory: &str,
-    process_fn: F,
+    mut process_fn: F,
 ) where
     F: FnMut(PathBuf),
 {
-    WalkDir::new(directory)
+    map_entries(directory)
+        .iter()
+        .for_each(|item| process_fn((*item.clone()).to_path_buf()))
+}
+fn map_entries(
+    directory: &str,
+)-> Vec<PathBuf> {
+  return  WalkDir::new(directory)
         .into_iter()
         .filter_map(|e| e.ok())
         .filter_map(|entry| {
@@ -337,7 +345,7 @@ fn process_entries<F>(
             } else { None };
         })
         .map(|entry| entry.path().to_path_buf())
-        .for_each(process_fn);
+      .collect()
 }
 
 fn file_to_base64(
@@ -431,7 +439,6 @@ fn generate_svg(
                     pb.set_message(format!("Processed content of  {}", target_file_path));
                     pb.inc(1);
                     process_file_common(
-                        &filename,
                         &target_file_path,
                         organisation.as_str(),
                         &*current.template,
@@ -451,7 +458,6 @@ fn generate_svg(
 }
 
 fn process_file_common(
-    file_path: &str,
     target_file_path: &str,
     organisation: &str,
     name: &str,
@@ -459,7 +465,7 @@ fn process_file_common(
     value: &str,
     special: &str,
     ort: &str,
-    helfer: &str,
+    volunteer: &str,
     dir: &str,
     tera: Tera,
 ) {
@@ -495,7 +501,7 @@ fn process_file_common(
         context.insert("organisation", "");
     }
     context.insert("ort", &ort);
-    context.insert("helfer", &helfer);
+    context.insert("volunteer", &volunteer);
     context.insert("special", &special);
     if inverted {
         context.insert("main_color", &secondary);

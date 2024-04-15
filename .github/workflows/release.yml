@@ -27,7 +27,7 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - run: echo "enabled=false" >> helfer.toml
+      - run: echo "enabled=false" >> volunteer.toml
       - run: cargo run
       - uses: vimtor/action-zip@v1.1
         with:
@@ -59,9 +59,9 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: echo "enabled=false" >> helfer.toml
+      - run: echo "enabled=false" >> volunteer.toml
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: taktische-zeichen
-          include: config.toml,helfer.toml,icons,LICENSE
+          include: config.toml,volunteer.toml,icons,LICENSE
           token: ${{ secrets.GITHUB_TOKEN }}

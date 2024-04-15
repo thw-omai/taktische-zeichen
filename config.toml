@@ -1,14 +1,14 @@
 enable_png = true
 
 [[thw]]
-template = "Helfer"
+template = "Volunteer"
 zug = "Alle"
 names = ",KF,SAN,peer,psFK,AB,Ko,OJB,SM,StvOB,Vw"
 special = ""
 dir = "personen"
 
 [[thw]]
-template = "Helfer"
+template = "Volunteer"
 zug = "OV"
 names = "AB,BÖH"
 special = ""
@@ -31,7 +31,7 @@ dir = "personen"
 #### FK ####
 
 [[thw]]
-template = "Helfer"
+template = "Volunteer"
 zug = "Alle"
 names = "IuK,RiFu"
 special = ""
@@ -470,7 +470,7 @@ special = ""
 dir = "personen"
 
 [[fw]]
-template = "Helfer"
+template = "Volunteer"
 zug = ""
 names = ",A,Ma,Me,S,W"
 special = ""
