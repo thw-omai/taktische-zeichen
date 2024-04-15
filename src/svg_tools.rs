@@ -1,7 +1,7 @@
 use std::{
+    collections::HashMap,
     fs,
     path::{Path, PathBuf},
-    collections::HashMap,
     string::String
 };
 
@@ -25,8 +25,7 @@ use resvg::{
 use tiny_skia::{Pixmap, Transform};
 use usvg::Options;
 
-use crate::map_entries;
-use crate::utils::calc_hash;
+use crate::utils::{calc_hash, map_entries};
 
 pub(crate) fn convert_svg(
     progress_bar: ProgressBar,

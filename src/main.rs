@@ -1,25 +1,16 @@
 use std::{
     collections::HashMap,
     fs::{
-        self,
-        File,
+        self
     },
-    io::{
-        self,
-        Read,
-    },
-    path::{Component, Path, PathBuf},
+    path::{Path, PathBuf},
     thread::{
         self,
-        JoinHandle
+        JoinHandle,
     },
     time::Duration,
 };
 
-use base64::{
-    Engine,
-    engine::general_purpose,
-};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use rayon::iter::{
     IntoParallelIterator,
@@ -30,7 +21,18 @@ use tera::{Context, Tera};
 use walkdir::WalkDir;
 
 use crate::config::{DescriptionObjects, Person};
-use crate::utils::calc_hash;
+use crate::utils::{
+    calc_hash,
+    create_progress_bar,
+    file_to_base64,
+    join_filename,
+    join_paths,
+    path_to_id,
+    path_to_title,
+    process_entries,
+    save_to_file,
+    uppercase_first_letter
+};
 
 mod svg_tools;
 mod config;
@@ -54,7 +56,7 @@ fn main() {
     };
     template_engine.autoescape_on(vec![".template.svg"]);
 
-    let spinner_style = ProgressStyle::with_template("{prefix:.bold.dim}[{pos:3} files][{elapsed:3}] {spinner} {wide_msg}")
+    let spinner_style = ProgressStyle::with_template("{prefix:.bold.dim}[{pos:4} files][{elapsed:3}] {spinner} {wide_msg}")
         .unwrap()
         .tick_chars("⠁⠂⠄⡀⢀⠠⠐⠈ ");
     let mut m = MultiProgress::new();
@@ -120,70 +122,62 @@ fn main() {
     create_drawio(pb)
 }
 
-fn create_progress_bar(
-    spinner_style: &ProgressStyle,
-    m: MultiProgress,
-    prefix: &str,
-    multi: bool,
-) -> (ProgressBar, MultiProgress) {
-    let pb;
-    if multi {
-        pb = m.add(ProgressBar::new_spinner());
-    } else {
-        pb = ProgressBar::new_spinner();
-    }
-    pb.set_style(spinner_style.clone());
-    pb.set_prefix(format!("[{:>7}]", prefix));
-    pb.enable_steady_tick(Duration::from_millis(100));
-    (pb, m)
-}
 
 fn copy_volunteer(
     pb: ProgressBar,
     template_engine: Tera,
-    volunteer: &mut Vec<Person>,
+    volunteers: &mut Vec<Person>,
 ) {
-    volunteer
+    volunteers
         .iter()
-        .for_each(|person| {
-            vec![true, false]
-                .iter()
-                .for_each(|inverted| {
-                    person
-                        .volunteer
-                        .split(",")
-                        .for_each(|volunteer| {
-                            person
-                                .value
-                                .split(",")
-                                .for_each(|val| {
-                                    let target_file_path = format!(
-                                        "build/custom/svg/{}/{}/{}/{}-{}-{}.svg",
-                                        if *inverted { "inverted" } else { "original" },
-                                        &person.organisation,
-                                        &person.zug,
-                                        &volunteer,
-                                        person.template,
-                                        val,
-                                    );
+        .map(|person| {
+            person
+                .volunteer
+                .split(",")
+                .map(|volunteer| (person, volunteer))
+                .collect::<Vec<_>>()
+        })
+        .flatten()
+        .map(|(person, volunteer)| {
+            vec!(
+                (person, volunteer, true),
+                (person, volunteer, false)
+            )
+        })
+        .flatten()
+        .map(|(person, volunteer, inverted)| {
+            person
+                .value
+                .split(",")
+                .map(|special_position| (person, volunteer, inverted, special_position))
+                .collect::<Vec<_>>()
+        })
+        .flatten()
+        .for_each(|(person, volunteer, inverted, special_position)| {
+            let target_file_path = format!(
+                "build/custom/svg/{}/{}/{}/{}-{}-{}.svg",
+                if inverted { "inverted" } else { "original" },
+                &person.organisation,
+                &person.zug,
+                &volunteer,
+                person.template,
+                special_position,
+            );
 
-                                    pb.set_message(format!("Processed content of  {}", target_file_path));
-                                    pb.inc(1);
-                                    process_file_common(
-                                        &target_file_path,
-                                        &*person.organisation,
-                                        &person.template,
-                                        *inverted,
-                                        &*val,
-                                        "",
-                                        "",
-                                        volunteer,
-                                        "personen",
-                                        template_engine.clone(),
-                                    )
-                                });
-                        });
-                });
+            pb.set_message(format!("Processed content of  {}", target_file_path));
+            pb.inc(1);
+            process_file_common(
+                &target_file_path,
+                &*person.organisation,
+                &person.template,
+                inverted,
+                &*special_position,
+                "",
+                "",
+                volunteer,
+                "personen",
+                template_engine.clone(),
+            )
         });
     pb.finish_with_message("finished");
 }
@@ -197,13 +191,13 @@ fn read_in_hashes(
             if let Ok(entry) = entry {
                 let file_type = entry.file_type().unwrap();
                 if file_type.is_dir() {
-                    // Recursively read hashes from subdirectories
                     read_in_hashes(hashes, &entry.path());
                 } else if let Some(file_name) = entry.file_name().to_str() {
                     if file_name.ends_with(".svg") {
-                        // Calculate hash for SVG files
-                        let final_hash = calc_hash(entry.path().to_str().unwrap());
-                        hashes.insert(entry.path().to_str().unwrap().to_string(), final_hash);
+                        hashes.insert(
+                            entry.path().to_str().unwrap().to_string(),
+                            calc_hash(entry.path().to_str().unwrap())
+                        );
                     }
                 }
             }
@@ -262,101 +256,6 @@ fn create_drawio(
         )
     });
     pb.finish_with_message("finished")
-}
-
-fn path_to_title(
-    match_name: &str,
-    path: PathBuf,
-) -> String {
-    let mut result = String::new();
-
-    for component in path.components() {
-        if let Component::Normal(name) = component {
-            if name == match_name {
-                result.clear();
-            } else if name != "svg" {
-                result.push_str(
-                    name.to_str()
-                        .unwrap_or("")
-                        .replace("-", " ")
-                        .as_str()
-                );
-                result.push(' ');
-            }
-        }
-    }
-
-    result
-        .trim()
-        .trim_end_matches(".svg")
-        .to_string()
-}
-
-fn path_to_id(
-    match_name: &str,
-    path: &Path,
-) -> String {
-    let mut result = String::new();
-
-    for component in path.components() {
-        if let Component::Normal(name) = component {
-            if name == match_name {
-                result.clear();
-            } else if name != "svg" {
-                result.push_str(name.to_str().unwrap_or(""));
-                result.push('-');
-            }
-        }
-    }
-
-    let mut result = result.trim_end_matches("-").to_string();
-    if result.contains("original") {
-        result = result.trim_start_matches("original-").to_string();
-        result = format!("{}-original", result);
-    } else if result.contains("inverted") {
-        result = result.trim_start_matches("inverted-").to_string();
-        result = format!("{}-inverted", result);
-    }
-    result
-}
-fn process_entries<F>(
-    directory: &str,
-    mut process_fn: F,
-) where
-    F: FnMut(PathBuf),
-{
-    map_entries(directory)
-        .iter()
-        .for_each(|item| process_fn((*item.clone()).to_path_buf()))
-}
-fn map_entries(
-    directory: &str,
-)-> Vec<PathBuf> {
-  return  WalkDir::new(directory)
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .filter_map(|entry| {
-            return if let Some(extension) = entry.path().extension() {
-                if extension == "svg" {
-                    Some(entry)
-                } else {
-                    None
-                }
-            } else { None };
-        })
-        .map(|entry| entry.path().to_path_buf())
-      .collect()
-}
-
-fn file_to_base64(
-    file_path: &str
-) -> io::Result<String> {
-    let mut file = File::open(file_path)?;
-
-    let mut content = String::new();
-    file.read_to_string(&mut content)?;
-
-    Ok(general_purpose::STANDARD.encode(&content))
 }
 
 
@@ -520,47 +419,4 @@ fn process_file_common(
         &context,
     ).expect("Couldn't parse template");
     save_to_file(target_file_path, &content)
-}
-
-fn save_to_file(file_name: &str, content: &str) {
-    let parent = Path::new(file_name).parent().expect("ERROR during path traversal");
-    if !parent.exists() {
-        fs::create_dir_all(parent).expect("Unable to create directory");
-    }
-    fs::write(file_name, content).expect("Unable to write file");
-}
-
-fn join_paths(
-    paths: Vec<&str>,
-) -> String {
-    let mut string = paths
-        .iter()
-        .filter(|template| !template.is_empty())
-        .map(|x| x.as_ref())
-        .collect::<Vec<_>>()
-        .join("/");
-    string
-        .push_str("/");
-    string
-}
-
-fn join_filename(
-    names: Vec<&str>,
-) -> String {
-    names
-        .iter()
-        .filter(|template| !template.is_empty())
-        .map(|x| x.as_ref())
-        .collect::<Vec<_>>()
-        .join("-")
-}
-
-fn uppercase_first_letter(
-    s: &str
-) -> String {
-    let mut c = s.chars();
-    match c.next() {
-        None => String::new(),
-        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-    }
 }
